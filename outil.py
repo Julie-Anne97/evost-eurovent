@@ -21,15 +21,6 @@ with st.sidebar:
 
 st.title('Software Eurovent')
 
-
-evost  = pd.read_excel("C:\\Users\\jarosquin\\Documents\\evost\\evost_h.xlsx")
-# evost 
-# qa = evost.iloc[:,2]
-# ta = 10
-# evost.info()
-
-
-
 if option == 'Option 1 : Outlet Water Temperature':
     #STEP 1: choose one airflow from the table, then define the water temperatures (= enter qa & twin)
     st.markdown("**STEP 1: choose one airflow from the table, then define the water temperatures (= enter qa & twin)**")
