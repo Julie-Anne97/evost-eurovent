@@ -4,7 +4,7 @@ import datetime
 from PIL import Image
 pd.set_option('display.max_columns', None)
 
-logo = Image.open("C:\\Users\\jarosquin\\Documents\\evost\\EVOST logo.png")
+logo = Image.open("EVOST logo.png")
 
 
 with st.sidebar:    
