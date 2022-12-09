@@ -1,10 +1,14 @@
-import streamlit as st
 import pandas as pd
-import datetime
+import streamlit as st
 from PIL import Image
+from datetime import datetime
+
 pd.set_option('display.max_columns', None)
 
-logo = Image.open("EVOST logo.png")
+logo = Image.open("C:\\Users\\jarosquin\\Documents\\evost\\EVOST logo.png")
+
+timestamp = datetime.now()
+timestamp = timestamp.strftime("%d-%m-%Y_%H:%M:%S")
 
 
 with st.sidebar:    
@@ -20,6 +24,7 @@ with st.sidebar:
 
 
 st.title('Software Eurovent')
+
 
 if option == 'Option 1 : Outlet Water Temperature':
     #STEP 1: choose one airflow from the table, then define the water temperatures (= enter qa & twin)
@@ -111,33 +116,37 @@ if option == 'Option 1 : Outlet Water Temperature':
     # submit button
     st.subheader("Add new values to table")
     
-    d = {'Primary Air Flow Rate': qavalue, 
-     'Primary Air Temperature': travalue,
-     'Reference Air Remperature': trvalue,
-     'Room Temperature Gradient': tgrvalue,
-     'Inlet Water Temperature': twinvalue,
-     "dtw" : dtwvalue,
-     "water flow rate" : qw3,
-     "water side capacity" : pw3,
-     "air side pressure" : pma
-     }
+    results_option1 = pd.read_csv('results_option1.csv')
+    results_option1
     
+    add_ref = results_option1["ref"].max()+1
+    
+    # d = pd.DataFrame([d],index=[0])
     # d
-    
-    #d = pd.DataFrame(data=d,index=[0])
-    # d.to_csv('resultats.csv',index=True)
-    resultats = pd.read_csv('resultats.csv')
-    # resultats
+    #d.to_csv('results_option1.csv')
     
     clickSubmit = st.button('Save values')
     
     if clickSubmit == True: 
-        resultats = resultats.append( d,ignore_index=True)
-        open('resultats.csv', 'w').write(resultats.to_csv())
+         newdata = {'ref' : add_ref,
+              'Primary Air Flow Rate': qavalue, 
+              'Primary Air Temperature': travalue,
+              'Reference Air Remperature': trvalue,
+              'Room Temperature Gradient': tgrvalue,
+              'Inlet Water Temperature': twinvalue,
+              "dtw" : dtwvalue,
+              "water flow rate" : qw3,
+              "water side capacity" : pw3,
+              "air side pressure" : pma}
+         st.write(newdata)
+         results_option1 = results_option1.append(newdata,ignore_index=True)
+         results_option1.to_csv('results_option1.csv',index=False)
+         #results_option1 = pd.concat([results_option1,d])
+         #open('results_option1.csv','a').write(results_option1.to_csv())
     else :
         st.markdown("Please submit to save")
     
-    st.write(resultats)
+    st.write(results_option1)
 
     
     
