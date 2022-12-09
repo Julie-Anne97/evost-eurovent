@@ -5,7 +5,7 @@ from datetime import datetime
 
 pd.set_option('display.max_columns', None)
 
-logo = Image.open("C:\\Users\\jarosquin\\Documents\\evost\\EVOST logo.png")
+logo = Image.open("EVOST logo.png")
 
 timestamp = datetime.now()
 timestamp = timestamp.strftime("%d-%m-%Y_%H:%M:%S")
