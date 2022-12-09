@@ -117,7 +117,7 @@ if option == 'Option 1 : Outlet Water Temperature':
     st.subheader("Add new values to table")
     
     results_option1 = pd.read_csv('results_option1.csv')
-    results_option1
+    # results_option1
     
     add_ref = results_option1["ref"].max()+1
     
@@ -187,4 +187,48 @@ elif option == 'Option 2 : Water flow':
     
     #STEP 5: calculate the power (W) correspondent to waterflow desired, using the Dtrw chosen							
     st.markdown("**STEP 5: calculate the power (W) correspondent to waterflow desired, using the Dtrw chosen**")
+    
+    
+    
+    d = {'ref' : 1,
+        'Water flow' : qwvalue,
+              'Primary Air Flow Rate': qavalue, 
+              'Primary Air Temperature': travalue,
+              'Reference Air Remperature': trvalue,
+              'Room Temperature Gradient': tgrvalue,
+              'Inlet Water Temperature': twinvalue,
+              "Specific power" : PLTtest}
+    
+    
+    d = pd.DataFrame([d],index=[0])
+    d
+    d.to_csv('results_option2.csv')
+    
+    results_option2 = pd.read_csv('results_option2.csv')
+    results_option2
+    
+    add_ref = results_option2["ref"].max()+1
+    
+    clickSubmit = st.button('Save values')
+    
+    if clickSubmit == True: 
+         newdata = {'ref' : add_ref,
+              'Primary Air Flow Rate': qavalue, 
+              'Primary Air Temperature': travalue,
+              'Reference Air Remperature': trvalue,
+              'Room Temperature Gradient': tgrvalue,
+              'Inlet Water Temperature': twinvalue,
+              "dtw" : dtwvalue,
+              "water flow rate" : qw3,
+              "water side capacity" : pw3,
+              "air side pressure" : pma}
+         st.write(newdata)
+         results_option2 = results_option2.append(newdata,ignore_index=True)
+         results_option2.to_csv('results_option2.csv',index=False)
+         #results_option1 = pd.concat([results_option1,d])
+         #open('results_option1.csv','a').write(results_option1.to_csv())
+    else :
+        st.markdown("Please submit to save")
+    
+    st.write(results_option2)
     
