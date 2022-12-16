@@ -80,7 +80,6 @@ with c4:
 with c5:
     st.write("")
 
-
         
 if option == 'Option 1 : Outlet Water Temperature':    
     #STEP 2: calculate Dtw and Dtrw
@@ -109,6 +108,10 @@ if option == 'Option 1 : Outlet Water Temperature':
     # st.markdown("**STEP 5: calculate waterflow**")
     qw1 = pw1 / (dtrw_cooling*4200)
     # st.write("qw1 : ", qw1)
+    
+    stop = 0.01
+    
+    
     
     def epsilon(x):
         eqw = 0,588878-(1.955)*x+(3140.21)*x**2-(125288)*x**3+exp(2.43832)+6*x^4-exp(2.57437)+(7*x)**5+exp(1.416)+(8*x)**6-exp(3.18428)+(8*x)**7
@@ -140,6 +143,7 @@ if option == 'Option 1 : Outlet Water Temperature':
     else:
         eqw2 = 2*qw2+0.5 #formule à définir pour l'itération 
     pw3 = pw2 * eqw2
+    pw3 = round(pw3,2)
     # st.write("pw3 : ",pw3)   
     
     # STEP 11: calculate the correspondet water flow, using the Dtw calculated and Pw3
@@ -149,30 +153,37 @@ if option == 'Option 1 : Outlet Water Temperature':
     
     ## IMPORTANT faire une boucle while pour continuer l'itération tant que l'écart entre qwn et qwn-1 est > 0.01
         
-    # st.subheader("Outputs")
-    # st.markdown("**Difference between water outlet and water inlet**")
-    # st.write("dtw : ",dtwvalue)
-    # st.markdown("**waterflow rate**")
-    # qw3 = round(qw3,1)
-    # st.write("qw : ",qw3)
-    # st.markdown("**water side capacity**")
-    # pw3 = round(pw3,2)
-    # st.write("pw : ", pw3)
-    # st.markdown("**Air side pressure**")
+
     pma = 1.2*qa*(troom_cooling+tgr_cooling+(dtrw_cooling/2))
     pma = round(pma,2)
     # st.write("pma : ",pma)
     
+    troom_cooling = round(troom_cooling,2)
+    troom_heating = round(troom_heating,2)
+    twin_cooling = round(twin_cooling,2)
+    twin_heating = round(twin_heating,2)
+    twout_cooling = round(twout_heating,2)
+    tgr_cooling = round(tgr_cooling,2)
+    tgr_heating = round(tgr_heating,2)
+    dtra_cooling = round(dtra_cooling,2)
+    dtra_heating = round(dtra_heating,2)
+    
     st.markdown('**Tableau récapitulatif**')
     
-    recapitulatif = [
+    option1 = [
         ['Total capacity','', '', '','',''],
         ['Water side capacity','pw','',pw3,'',pw3],
         ['Air side capacity', 'pma','',pma,'',pma],
-        ['Reference air temperature','troom', troom_cooling,'',troom_cooling,'']]
+        ['Reference air temperature','troom', troom_cooling,'',troom_heating,''],
+        ['Gradient','',tgr_cooling,'',tgr_heating,''],
+        ['Primary air temperature','dtra',dtra_cooling,'',dtra_heating,''],
+        ['Inlet water temperature','twi',twin_cooling,'',twin_heating,''],
+        ['Outlet water temperature','twout',twout_cooling,'',twin_heating,''],
+        ['Diff out-in','dtw','','','',''],
+        ['Water flow rate','qw','','','','']]
     
-    df = pd.DataFrame(recapitulatif, columns =['',' ', 'Cooling inputs','Cooling outputs','Heating inputs','Heating outputs'])
-    st.write(df)
+    df1 = pd.DataFrame(option1, columns =['',' ', 'Cooling inputs','Cooling outputs','Heating inputs','Heating outputs'])
+    st.write(df1)
     
     
     # submit button
