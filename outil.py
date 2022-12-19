@@ -2,8 +2,11 @@ import pandas as pd
 import streamlit as st
 from PIL import Image
 from math import exp
+from datetime import date
 
 pd.set_option('display.max_columns', None)
+
+today = date.today()
 
 logo = Image.open("EVOST logo.png")
 
@@ -12,12 +15,10 @@ logo = Image.open("EVOST logo.png")
 with st.sidebar:    
     st.image(logo)
     st.container()
-    st.radio("Model", (800, 1150, 1250, 1400, 2600), disabled=True,index=2)
-    st.radio("Type : ", ("Horizontal","Vertical"), disabled=True)
     st.radio("Nozzle : ", ("E1","E1.1"), disabled=True)
-    option = st.radio(
-    "Select option",
-    ('Option 1 : Outlet Water Temperature', 'Option 2 : Water flow'))
+    st.radio("Model", (800, 1150, 1250, 1400, 2600), disabled=True,index=2)
+    st.radio("Tubes",(2,4),disabled=True,index=1)
+    st.radio("Type : ", ("Horizontal","Vertical"), disabled=True)
 
 
 
@@ -27,7 +28,11 @@ st.title('Software Eurovent')
     
     
 #STEP 1: choose one airflow from the table, then define the water temperatures (= enter qa & twin)
-        
+
+option = st.radio(
+    "Select option",
+    ('Option 1 : Outlet Water Temperature', 'Option 2 : Water flow'))
+
 st.subheader('Select inputs')
 
 col1,col2,col3 = st.columns(3)
@@ -88,7 +93,7 @@ if option == 'Option 1 : Outlet Water Temperature':
     
     #STEP 5: calculate the correspondet water flow, using the Dtw calculated
     # st.markdown("**STEP 5: calculate waterflow**")
-    qw1_cooling = pw1_cooling / (dtrw_cooling*4200)
+    qw1_cooling = pw1_cooling / (dtw_cooling*4200)
     
     stop = 0.01
     
@@ -254,6 +259,21 @@ if option == 'Option 1 : Outlet Water Temperature':
         st.markdown("Please submit to save")
     
     st.write(results_option1)
+    
+    @st.cache
+    
+    def convert_df(results_option1):
+    # IMPORTANT: Cache the conversion to prevent computation on every rerun
+        return results_option1.to_csv().encode('utf-8')
+
+    csv = convert_df(results_option1)
+    
+    st.download_button(
+    label="Download data as CSV",
+    data=csv,
+    file_name='results_evost_option1.csv',
+    mime='text/csv',
+)
 
     
     
@@ -335,4 +355,3 @@ elif option == 'Option 2 : Water flow':
         st.markdown("Please submit to save")
     
     st.write(results_option2)
-    
