@@ -174,7 +174,6 @@ if option == 'Option 1 : Outlet Water Temperature':
 
     recapitulatif = [
     option1 = [
-        ['Total capacity','', '', '','',''],
         ['Water side capacity','pw','',pw3,'',pw3],
         ['Air side capacity', 'pma','',pma,'',pma],
         ['Reference air temperature','troom', troom_cooling,'',troom_cooling,'']]
