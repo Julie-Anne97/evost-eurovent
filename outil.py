@@ -173,7 +173,6 @@ if option == 'Option 1 : Outlet Water Temperature':
     st.markdown('**Tableau récapitulatif**')
 
     recapitulatif = [
-    option1 = [
         ['Water side capacity','pw','',pw3,'',pw3],
         ['Air side capacity', 'pma','',pma,'',pma],
         ['Reference air temperature','troom', troom_cooling,'',troom_cooling,'']]
