@@ -179,6 +179,8 @@ if option == 'Option 1 : Outlet Water Temperature':
 
     df = pd.DataFrame(recapitulatif, columns =['',' ', 'Cooling inputs','Cooling outputs','Heating inputs','Heating outputs'])
     st.write(df)
+    
+    option1 = [
         ['Reference air temperature','troom', troom_cooling,'',troom_heating,''],
         ['Gradient','',tgr_cooling,'',tgr_heating,''],
         ['Primary air temperature','dtra',dtra_cooling,'',dtra_heating,''],
