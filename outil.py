@@ -151,8 +151,8 @@ if option == 'Option 1 : Outlet Water Temperature':
     ## IMPORTANT faire une boucle while pour continuer l'itération tant que l'écart entre qwn et qwn-1 est > 0.01
     
     
-    pa_cooling = 1.2*qa*(troom_cooling+tgr_cooling+(dtrw_cooling/2))
-    pma_cooling = 35.06543*qa-186.32415
+    # pa_cooling = 1.2*qa*(troom_cooling+tgr_cooling+(dtrw_cooling/2))
+    # pma_cooling = 35.06543*qa-186.32415
     
     
     ## HEATING INPUTS
@@ -188,8 +188,13 @@ if option == 'Option 1 : Outlet Water Temperature':
     pw5_heating = pw1_heating*epsilon(qw4_heating)
     qw5_heating = pw5_heating / (dtw_heating*4200)
     
+    dtra_cooling = troom_cooling+tgr_cooling-ta_cooling
+    dtra_heating = troom_heating+tgr_heating-ta_heating
+
+    pma = 27.672*qa+161.73
+    pa_cooling=1.2*qa*dtra_cooling
+    pa_heating=1.2*qa*dtra_heating
     
-    pma = 1.2*qa*(troom_cooling+tgr_cooling+(dtrw_cooling/2))
     
     pa_heating = 1.2*qa*(troom_heating+tgr_heating+(dtrw_heating/2))
     pa_heating = round(pa_heating,2)
@@ -200,13 +205,16 @@ if option == 'Option 1 : Outlet Water Temperature':
     dpw_cooling = dpw_cooling_formula(qw5_cooling)
     dpw_heating = dpw_heating_formula(qw5_heating)
     
+
+    
     qa=round(qa,2)
     qa = str(qa)
     troom_cooling = round(troom_cooling,2)
     troom_heating = round(troom_heating,2)
     twin_cooling = round(twin_cooling,2)
     twin_heating = round(twin_heating,2)
-    twout_cooling = round(twout_heating,2)
+    twout_cooling = round(twout_cooling,2)
+    twout_heating = round(twout_heating,2)
     tgr_cooling = round(tgr_cooling,2)
     tgr_heating = round(tgr_heating,2)
     dtra_cooling = round(dtra_cooling,2)
