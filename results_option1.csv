@@ -1,5 +1,1 @@
 ref,Primary Air Flow Rate,Motive air side pressure cooling,Water side capacity cooling,Water side capacity heating,Air side capacity cooling,Air side capacity heating,Reference air temperature cooling,Reference air temperature heating,Gradient cooling,Gradient heating,Primary air temperature cooling,Primary air temperature heating,Inlet water temperature cooling,Inlet water temperature heating,Outlet Water Temperature cooling,Outlet Water Temperature heating
-1.0,59.0,10.0,26.0,0.0,15.81,1.83,0.2,1902.04,1905.58
-2.0,70.0,10.0,26.0,0.0,15.81,4.19,0.1,2224.7,2359.98
-3.0,70.0,10.0,26.0,0.0,15.81,0.1899999999999995,2.8,2224.7,2191.98
-4.0,70.0,10.0,23.0,0.0,16.0,-6.0,-0.0,302.85,1680.0
