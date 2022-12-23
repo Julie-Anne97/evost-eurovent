@@ -253,7 +253,7 @@ if option == 'Option 1 : Outlet Water Temperature':
         ['Room temperature gradient','','tgr',tgr_cooling,'',tgr_heating,''],
         ['Primary (Motive) air temperature', '(°C)','dtra','',dtra_cooling,'',dtra_heating],
         ['Inlet water temperature','(°C)','twi',twin_cooling,'',twin_heating,''],
-        ['Outlet water temperature','(°C) ','twout',twout_cooling,'',twout_heating,'']
+        ['Outlet water temperature','(°C) ','twout',twout_cooling,'',twout_heating,''],
         ['Water temperature difference in out', '(°C)','dtw','',dtw_cooling,'',dtw_heating],
         ['Temp. diff. room air and mean water temp ','(K)','dtrw'],
         ['Water flow rate','(l/s)','qw','',qw5_cooling,'',qw5_heating],
