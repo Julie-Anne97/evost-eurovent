@@ -23,8 +23,6 @@ with st.sidebar:
     st.radio("Type : ", ("Horizontal","Vertical"), disabled=True)
 
 
-
-
 st.title('Software Eurovent')
 
     
@@ -41,34 +39,34 @@ st.subheader('Select inputs')
 
 col1,col2,col3 = st.columns(3)
 with col1:
-    qa = st.number_input('Primary air flow rate (l/s)',value=16.0,min_value=11.0)
+    qa = st.number_input('Motive (Primary) air flow rate - qa (l/s)',value=16.0,min_value=11.0)
  
     
 c1,c2,c3,c4,c5 = st.columns(5)
 
 with c1:
     st.markdown('**Cooling inputs**')
-    troom_cooling = st.number_input('Reference Air Remperature (°C)',value=26)
-    tgr_cooling = st.number_input('Room Temperature Gradient (k/m)', value=0)
-    ta_cooling = st.number_input('Primary Air Temperature (°C)',value=10)
-    twin_cooling = st.number_input('Inlet Water Temperature (°C)',value=15.0,min_value=13.0)
+    troom_cooling = st.number_input('Reference Air Remperature - troom (°C)',value=26)
+    tgr_cooling = st.number_input('Room Temperature Gradient -tgr (k/m)', value=0)
+    ta_cooling = st.number_input('Primary Air Temperature - ta (°C)',value=10)
+    twin_cooling = st.number_input('Inlet Water Temperature - twin (°C)',value=15.0,min_value=13.0)
     if option == 'Option 1 : Outlet Water Temperature':
-        twout_cooling = st.number_input('Outlet Water Temperature (°C)',value=18)
+        twout_cooling = st.number_input('Outlet Water Temperature - twout (°C)',value=18)
     else:
-        qw_cooling = st.number_input('Water flow rate',value=0.08,step=1e-6)
+        qw_cooling = st.number_input('Water flow rate - qw (l/s)',value=0.08,step=1e-6)
        
 with c2:
     st.write('')
 with c3:
     st.markdown('**Heating inputs**')
-    troom_heating = st.number_input('Reference Air Remperature  (°C)',value=26)
-    tgr_heating = st.number_input('Room Temperature Gradient (k/m)  ', value=0)
-    ta_heating = st.number_input('Primary Air Temperature  (°C)',value=10)
-    twin_heating = st.number_input('Inlet Water Temperature  (°C)',value=15.0,min_value=13.0)
+    troom_heating = st.number_input('Reference Air Remperature - troom (°C)  ',value=26)
+    tgr_heating = st.number_input('Room Temperature Gradient - tgr (k/m)  ', value=0)
+    ta_heating = st.number_input('Primary Air Temperature - ta (°C)  ',value=10)
+    twin_heating = st.number_input('Inlet Water Temperature -twin (°C)',value=15.0,min_value=13.0)
     if option == 'Option 1 : Outlet Water Temperature':
-        twout_heating = st.number_input('Outlet Water Temperature (°C)  ',value=17.64)
+        twout_heating = st.number_input('Outlet Water Temperature (°C) -twout ',value=17.64)
     else:
-        qw_heating = st.number_input('Water flow rate  ',value=0.08)
+        qw_heating = st.number_input('Water flow rate  -qw (l/s)',value=0.08)
 with c4:
     st.write('')
 with c5:
@@ -79,15 +77,17 @@ if option == 'Option 1 : Outlet Water Temperature':
     
     ## COOLING INPUTS 
 
-    
+    @st.cache
     def epsilon(x):
         eqw = 0.588878-17.955*x+3140.21*(x**2)-125288*(x**3)+2.43832*(10**6)*(x**4)-2.57437*(10**7)*(x**5)+1.416*(10**8)*(x**6)-3.18428*(10**8)*(x**7)
         return eqw
     
+    @st.cache
     def dpw_cooling_formula(x) :
         dpw_c = 1.25-328.673*x+36889*(x**2)-1.601*(10**6)*(x**3)+4.0005*(10**7)*(x**4)-5.50149*(10**8)*(x**5)+3.90377*(10**9)*(x**6)-1.11607*(10**10)*(x**7)
         return dpw_c
     
+    @st.cache
     def dpw_heating_formula(x):
         dpw_h = 0.2-55*x+6473.81*(x**2)-243790*(x**3)+5.22321*(10**6)*(x**4)-6.2004*(10**7)*(x**5)+3.86905*(10**8)*(x**6)-9.92063*(10**8)*(x**7)
         return dpw_h
@@ -241,35 +241,30 @@ if option == 'Option 1 : Outlet Water Temperature':
     
     st.subheader("Results")
     st.markdown("")
-    # st.write('Motive air flow rate qa (l/s) : ', qa)
-    # st.write("Water flow rate cooling : qw (l/s)",qw5_cooling)
-    # st.write("Water flow rate heating qw (l/s)",qw5_heating)
-    # st.write("Cooling capacity total Ptot_heating (w)",ptot_cooling)
-    # st.write("Heating capacity total ptot_heating (w)",ptot_heating)
     st.markdown("")
-    
-    
     st.markdown('**Tableau récapitulatif**')
     
     st.write('pwtest : ',w)
     st.write('plttest : ',PLT_cooling)
 
     option1 = [
-        ['Primary (Motive) air flow rate (l/s)','qa',qa,'',qa,''],
-        ['Motive air pressure (W)', 'pma', '', pma, '', pma],
-        ['Water side capacity (W)','pw','',pw5_cooling,'',pw5_cooling],
-        ['Air side capacity (W)', 'pa','',pa_cooling,'',pa_heating],
-        ['Total capacity (W)','ptot', '', ptot_cooling,'',ptot_heating],
-        ['Reference air temperature (°C)','troom', troom_cooling,'',troom_heating,''],
-        ['Room temperature gradient','tgr',tgr_cooling,'',tgr_heating,''],
-        ['Primary (Motive) air temperature (°C)','dtra','',dtra_cooling,'',dtra_heating],
-        ['Inlet water temperature (°C)','twi',twin_cooling,'',twin_heating,''],
-        ['Outlet water temperature (°C) ','twout',twout_cooling,'',twout_heating,''],
-        ['Water temperature difference in out (°C)','dtw','',dtw_cooling,'',dtw_heating],
-        ['Water flow rate (l/s)','qw','',qw5_cooling,'',qw5_heating],
-        ['Water pressure drop (kPa)','DPw','',dpw_cooling,'',dpw_heating]]
+        ['Motive (Primary) air flow rate' ,'(l/s)','qa',qa,'',qa,''],
+        ['Reference air temperature', '(°C)','troom', troom_cooling,'',troom_heating,''],
+        ['Room temperature gradient','','tgr',tgr_cooling,'',tgr_heating,''],
+        ['Primary (Motive) air temperature', '(°C)','dtra','',dtra_cooling,'',dtra_heating],
+        ['Inlet water temperature','(°C)','twi',twin_cooling,'',twin_heating,''],
+        ['Outlet water temperature','(°C) ','twout',twout_cooling,'',twout_heating,'']
+        ['Water temperature difference in out', '(°C)','dtw','',dtw_cooling,'',dtw_heating],
+        ['Temp. diff. room air and mean water temp ','(K)','dtrw'],
+        ['Water flow rate','(l/s)','qw','',qw5_cooling,'',qw5_heating],
+        ['Motive air pressure' ,'(W)', 'pma', '', pma, '', pma],
+        ['Water side capacity','(W)','pw','',pw5_cooling,'',pw5_cooling],
+        ['Air side capacity', '(W)', 'pa','',pa_cooling,'',pa_heating],
+        ['Total capacity', '(W)','ptot', '', ptot_cooling,'',ptot_heating],
+        ['Water pressure drop', '(kPa)','DPw','',dpw_cooling,'',dpw_heating]
+        ]
 
-    df1 = pd.DataFrame(option1, columns =['',' ', 'Cooling inputs','Cooling outputs','Heating inputs','Heating outputs'])
+    df1 = pd.DataFrame(option1, columns =['   ',' ','', 'Cooling inputs','Cooling outputs','Heating inputs','Heating outputs'])
     st.write(df1) 
     
     # submit button
@@ -506,21 +501,23 @@ elif option == 'Option 2 : Water flow':
     st.write('plt : ',PLT_cooling)
     
     option2 = [
-        ['Primary (Motive) air flow rate (l/s)','qa',qa,'',qa,''],
-        ['Motive air pressure (W)', 'pma', '', pma, '', pma],
-        ['Water side capacity (W)','pw','',pw5_cooling,'',pw5_cooling],
-        ['Air side capacity (W)', 'pa','',pa_cooling,'',pa_heating],
-        ['Total capacity (W)','ptot', '', ptot_cooling,'',ptot_heating],
-        ['Reference air temperature (°C)','troom', troom_cooling,'',troom_heating,''],
-        ['Room temperature gradient','tgr',tgr_cooling,'',tgr_heating,''],
-        ['Primary (Motive) air temperature (°C)','dtra','',dtra_cooling,'',dtra_heating],
-        ['Inlet water temperature (°C)','twi',twin_cooling,'',twin_heating,''],
-        ['Outlet water temperature (°C) ','twout',twout5_heating,'',twout5_heating,''],
-        ['Water temperature difference in out (°C)','dtw','',dtw5_cooling,'',dtw5_heating],
-        ['Water flow rate (l/s)','qw','',qw_cooling,'',qw_heating],
-        ['Water pressure drop (kPa)','DPw','',dpw_cooling,'',dpw_heating]]
+        ['Primary (Motive) air flow rate', '(l/s)','qa',qa,'',qa,''],
+        ['Reference air temperature', '(°C)','troom', troom_cooling,'',troom_heating,''],
+        ['Room temperature gradient','','tgr',tgr_cooling,'',tgr_heating,''],
+        ['Primary (Motive) air temperature', '(°C)','dtra','',dtra_cooling,'',dtra_heating],
+        ['Water flow rate', '(l/s)','qw','',qw_cooling,'',qw_heating],
+        ['Inlet water temperature', '(°C)','twi',twin_cooling,'',twin_heating,''],
+        ['Outlet water temperature', '(°C) ','twout',twout5_heating,'',twout5_heating,''],
+        ['Water temperature difference in out', '(°C)','dtw','',dtw5_cooling,'',dtw5_heating],
+        ['Motive air pressure', '(W)', 'pma', '', pma, '', pma],
+        ['Water side capacity', '(W)','pw','',pw5_cooling,'',pw5_cooling],
+        ['Air side capacity', '(W)', 'pa','',pa_cooling,'',pa_heating],
+        ['Total capacity', '(W)','ptot', '', ptot_cooling,'',ptot_heating],
+        
+        
+        ['Water pressure drop', '(kPa)','DPw','',dpw_cooling,'',dpw_heating]]
     
-    df2 = pd.DataFrame(option2, columns =['',' ', 'Cooling inputs','Cooling outputs','Heating inputs','Heating outputs'])
+    df2 = pd.DataFrame(option2, columns =['   ',' ','', 'Cooling inputs','Cooling outputs','Heating inputs','Heating outputs'])
     st.write(df2) 
     
     d = {'ref' : 1,
