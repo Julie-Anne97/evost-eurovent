@@ -39,7 +39,7 @@ st.subheader('Select inputs')
 
 col1,col2,col3 = st.columns(3)
 with col1:
-    qa = st.number_input('Motive (Primary) air flow rate - qa (l/s)',value=16.0,min_value=11.0)
+    qa = st.number_input('Motive (Primary) air flow rate - qa (l/s)',value=16.0,min_value=6.2)
  
     
 c1,c2,c3,c4,c5 = st.columns(5)
@@ -53,7 +53,7 @@ with c1:
     if option == 'Option 1 : Outlet Water Temperature':
         twout_cooling = st.number_input('Outlet Water Temperature - twout (°C)',value=18)
     else:
-        qw_cooling = st.number_input('Water flow rate - qw (l/s)',value=0.08,step=1e-6)
+        qw_cooling = st.number_input('Water flow rate - qw (l/s)',value=0.08,step=1.0,min_value=0.025)
        
 with c2:
     st.write('')
@@ -66,7 +66,7 @@ with c3:
     if option == 'Option 1 : Outlet Water Temperature':
         twout_heating = st.number_input('Outlet Water Temperature (°C) -twout ',value=17.64)
     else:
-        qw_heating = st.number_input('Water flow rate  -qw (l/s)',value=0.08)
+        qw_heating = st.number_input('Water flow rate  -qw (l/s)',value=0.08,step=1.0,min_value=0.025)
 with c4:
     st.write('')
 with c5:
@@ -129,40 +129,11 @@ if option == 'Option 1 : Outlet Water Temperature':
     pw5_cooling = pw1_cooling*epsilon(qw4_cooling)
     qw5_cooling = pw5_cooling / (dtw_cooling*4200)
     
-    #STEP 6: check the correction factor correspondent to qw from the graph		
-    
-    # #STEP 7: calculate the new power Pw2
-    # if qw1_cooling > 0.08:
-    #     eqw1_cooling = 1.06
-    # else:
-    #     eqw1_cooling = 2*qw1_cooling+0.5 #formule à définir pour l'itération 
-    #     ## IMPORTANT 
-    # pw2_cooling = pw1_cooling * eqw1_cooling
-    
-    # #STEP 8: calculate the correspondet water flow, using the Dtw calculated and Pw2
-    # qw2_cooling = pw2_cooling / (dtw_cooling*4200)
-    
-    # #STEP 9: check the correction factor correspondent to qw from the graph							
-    
-    # #STEP 10: calculate the new power Pw3							
-    # if qw2_cooling > 0.08:
-    #     eqw2_cooling = 1.06
-    # else:
-    #     eqw2_cooling = 2*qw2_cooling+0.5 #formule à définir pour l'itération 
-    # pw3_cooling = pw2_cooling * eqw2_cooling
-    # # pw3 = round(pw3,2)
-    
-    # # STEP 11: calculate the correspondet water flow, using the Dtw calculated and Pw3
-    # qw3_cooling = pw3_cooling/ (dtw_cooling*4200)
-    
-    ## IMPORTANT faire une boucle while pour continuer l'itération tant que l'écart entre qwn et qwn-1 est > 0.01
-    
-    
-    # pa_cooling = 1.2*qa*(troom_cooling+tgr_cooling+(dtrw_cooling/2))
-    # pma_cooling = 35.06543*qa-186.32415
     
     
     ## HEATING INPUTS
+    
+    
     
     #STEP 2: calculate Dtw and Dtrw
     dtw_heating = twout_heating -twin_heating
@@ -246,6 +217,9 @@ if option == 'Option 1 : Outlet Water Temperature':
     
     st.write('pwtest : ',w)
     st.write('plttest : ',PLT_cooling)
+    
+    twout_cooling
+    twout_heating
 
     option1 = [
         ['Motive (Primary) air flow rate' ,'(l/s)','qa',qa,'',qa,''],
@@ -519,6 +493,7 @@ elif option == 'Option 2 : Water flow':
     
     df2 = pd.DataFrame(option2, columns =['   ',' ','', 'Cooling inputs','Cooling outputs','Heating inputs','Heating outputs'])
     st.write(df2) 
+    
     
     d = {'ref' : 1,
         'Water flow' : qw_cooling,
