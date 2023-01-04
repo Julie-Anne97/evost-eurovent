@@ -17,11 +17,11 @@ with st.sidebar:
     st.subheader("")
     st.markdown("**EVOST E1 – 1250 – 4p – L - V**")
     st.container()
-    st.radio("Nozzle : ", ("E1","E1.1"), disabled=True)
-    st.radio("Model", (800, 1150, 1250, 1400, 2600), disabled=True,index=2)
-    st.radio("Tubes",(2,4),disabled=True,index=1)
+    # st.radio("Nozzle : ", ("E1","E1.1"), disabled=True)
+    # st.radio("Model", (800, 1150, 1250, 1400, 2600), disabled=True,index=2)
+    st.radio("Tubes",(2,4),index=1)
     st.radio("Type : ", ("Horizontal","Vertical"), disabled=True)
-
+    st.write("Motive pressure – pmot = 350 Pa")
 
 st.title('Software Eurovent')
 
@@ -53,7 +53,7 @@ with c1:
     if option == 'Option 1 : Outlet Water Temperature':
         twout_cooling = st.number_input('Outlet Water Temperature - twout (°C)',value=18)
     else:
-        qw_cooling = st.number_input('Water flow rate - qw (l/s)',value=0.08,step=1.0,min_value=0.025)
+        qw_cooling = st.number_input('Water flow rate - qw (l/s)',value=0.08,step=0.1,min_value=0.025)
        
 with c2:
     st.write('')
@@ -225,11 +225,11 @@ if option == 'Option 1 : Outlet Water Temperature':
         ['Motive (Primary) air flow rate' ,'(l/s)','qa',qa,'',qa,''],
         ['Reference air temperature', '(°C)','troom', troom_cooling,'',troom_heating,''],
         ['Room temperature gradient','','tgr',tgr_cooling,'',tgr_heating,''],
-        ['Primary (Motive) air temperature', '(°C)','dtra','',dtra_cooling,'',dtra_heating],
+        ['Primary (Motive) air temperature', '(°C)','dtra',dtra_cooling,"",dtra_heating,""],
         ['Inlet water temperature','(°C)','twi',twin_cooling,'',twin_heating,''],
         ['Outlet water temperature','(°C) ','twout',twout_cooling,'',twout_heating,''],
         ['Water temperature difference in out', '(°C)','dtw','',dtw_cooling,'',dtw_heating],
-        ['Temp. diff. room air and mean water temp ','(K)','dtrw'],
+        ['Temp. diff. room air and mean water temp ','(K)','dtrw','','','',''],
         ['Water flow rate','(l/s)','qw','',qw5_cooling,'',qw5_heating],
         ['Motive air pressure' ,'(W)', 'pma', '', pma, '', pma],
         ['Water side capacity','(W)','pw','',pw5_cooling,'',pw5_cooling],
@@ -478,17 +478,16 @@ elif option == 'Option 2 : Water flow':
         ['Primary (Motive) air flow rate', '(l/s)','qa',qa,'',qa,''],
         ['Reference air temperature', '(°C)','troom', troom_cooling,'',troom_heating,''],
         ['Room temperature gradient','','tgr',tgr_cooling,'',tgr_heating,''],
-        ['Primary (Motive) air temperature', '(°C)','dtra','',dtra_cooling,'',dtra_heating],
-        ['Water flow rate', '(l/s)','qw','',qw_cooling,'',qw_heating],
+        ['Primary (Motive) air temperature', '(°C)','dtra',dtra_cooling,'',dtra_heating,''],
+        ['Water flow rate', '(l/s)','qw',qw_cooling,'',qw_heating,''],
         ['Inlet water temperature', '(°C)','twi',twin_cooling,'',twin_heating,''],
-        ['Outlet water temperature', '(°C) ','twout',twout5_heating,'',twout5_heating,''],
+        ['Outlet water temperature', '(°C) ','twout','',twout5_cooling,'',twout5_heating],
         ['Water temperature difference in out', '(°C)','dtw','',dtw5_cooling,'',dtw5_heating],
+        ['Temp. diff. room air and min water temp.','(°C)','dtrw','',dtrw5_cooling,'',dtrw5_heating]
         ['Motive air pressure', '(W)', 'pma', '', pma, '', pma],
         ['Water side capacity', '(W)','pw','',pw5_cooling,'',pw5_cooling],
         ['Air side capacity', '(W)', 'pa','',pa_cooling,'',pa_heating],
         ['Total capacity', '(W)','ptot', '', ptot_cooling,'',ptot_heating],
-        
-        
         ['Water pressure drop', '(kPa)','DPw','',dpw_cooling,'',dpw_heating]]
     
     df2 = pd.DataFrame(option2, columns =['   ',' ','', 'Cooling inputs','Cooling outputs','Heating inputs','Heating outputs'])
