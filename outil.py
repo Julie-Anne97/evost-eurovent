@@ -3,35 +3,69 @@ import streamlit as st
 from PIL import Image
 from math import exp
 from datetime import date
+import os
 
 pd.set_option('display.max_columns', None)
+st.set_page_config(layout="wide")
 
 today = date.today()
-
 logo = Image.open("EVOST logo.png")
-
 
 
 with st.sidebar:    
     st.image(logo)
     st.subheader("")
-    st.markdown("**EVOST E1 – 1250 – 4p – L - V**")
+    st.markdown("**EVOST E1 – 1250 – 4p – L - H**")
     st.container()
     # st.radio("Nozzle : ", ("E1","E1.1"), disabled=True)
     # st.radio("Model", (800, 1150, 1250, 1400, 2600), disabled=True,index=2)
     st.radio("Tubes",(2,4),index=1)
     st.radio("Type : ", ("Horizontal","Vertical"), disabled=True)
-    st.write("Motive pressure – pmot = 350 Pa")
-
-st.title('Software Eurovent')
-
-    
-    
-#STEP 1: choose one airflow from the table, then define the water temperatures (= enter qa & twin)
-
-option = st.radio(
+    # st.write("Motive pressure – pmot = 350 Pa")
+    option = st.radio(
     "Select option",
     ('Option 1 : Outlet Water Temperature', 'Option 2 : Water flow'))
+    
+    
+st.markdown("""
+        <style>
+               .css-18e3th9 {
+                    padding-top: 1rem;
+                    padding-bottom: 10rem;
+                    padding-left: 1rem;
+                    padding-right: 1rem;
+                }
+               .css-1d391kg {
+                    padding-top: 3.5rem;
+                    padding-right: 1rem;
+                    padding-bottom: 3.5rem;
+                    padding-left: 1rem;
+                }
+                div[class*="stNumberInput"] label {font-size: 12px;}
+                input {font-size: 0.66rem !important;}
+        </style>
+        """, unsafe_allow_html=True)
+
+# style
+th_props = [
+  ('font-size', '8px'),
+  ('text-align', 'center'),
+  ('font-weight', 'bold'),
+  ('color', '#6d6d6d'),
+  ('background-color', '#f7ffff')
+  ]
+                               
+td_props = [
+  ('font-size', '12px')
+  ]
+                                 
+styles = [
+  dict(selector="th", props=th_props),
+  dict(selector="td", props=td_props)
+  ]
+
+    
+#STEP 1: choose one airflow from the table, then define the water temperatures (= enter qa & twin)
 
 st.subheader('Select inputs')
 
@@ -41,39 +75,35 @@ col1,col2,col3 = st.columns(3)
 with col1:
     qa = st.number_input('Motive (Primary) air flow rate - qa (l/s)',value=16.0,min_value=6.2)
  
-    
-c1,c2,c3,c4,c5 = st.columns(5)
-
-with c1:
-    st.markdown('**Cooling inputs**')
-    troom_cooling = st.number_input('Reference Air Remperature - troom (°C)',value=26)
-    tgr_cooling = st.number_input('Room Temperature Gradient -tgr (k/m)', value=0)
-    ta_cooling = st.number_input('Primary Air Temperature - ta (°C)',value=10)
-    twin_cooling = st.number_input('Inlet Water Temperature - twin (°C)',value=15.0,min_value=13.0)
-    if option == 'Option 1 : Outlet Water Temperature':
-        twout_cooling = st.number_input('Outlet Water Temperature - twout (°C)',value=18)
-    else:
-        qw_cooling = st.number_input('Water flow rate - qw (l/s)',value=0.08,step=0.1,min_value=0.025)
-       
-with c2:
-    st.write('')
-with c3:
-    st.markdown('**Heating inputs**')
-    troom_heating = st.number_input('Reference Air Remperature - troom (°C)  ',value=26)
-    tgr_heating = st.number_input('Room Temperature Gradient - tgr (k/m)  ', value=0)
-    ta_heating = st.number_input('Primary Air Temperature - ta (°C)  ',value=10)
-    twin_heating = st.number_input('Inlet Water Temperature -twin (°C)',value=15.0,min_value=13.0)
-    if option == 'Option 1 : Outlet Water Temperature':
-        twout_heating = st.number_input('Outlet Water Temperature (°C) -twout ',value=17.64)
-    else:
-        qw_heating = st.number_input('Water flow rate  -qw (l/s)',value=0.08,step=1.0,min_value=0.025)
-with c4:
-    st.write('')
-with c5:
-    st.write("")
-   
-   
+      
 if option == 'Option 1 : Outlet Water Temperature':
+    
+    st.markdown('**Cooling inputs**')
+    c1,c2,c3,c4,c5 = st.columns(5)
+    with c1:
+        troom_cooling = st.number_input('Reference Air Temperature - troom (°C)',value=26)
+    with c2:
+        tgr_cooling = st.number_input('Room Temperature Gradient -tgr (°C/m)', value=0)
+    with c3:
+        ta_cooling = st.number_input('Primary Air Temperature - ta (°C)',value=10)
+    with c4 :
+        twin_cooling = st.number_input('Inlet Water Temperature - twin (°C)',value=15.0,min_value=13.0)
+    with c5:
+        twout_cooling = st.number_input('Outlet Water Temperature - twout (°C)',value=18)
+    
+    st.markdown('**Heating inputs**')
+    c1,c2,c3,c4,c5 = st.columns(5)
+    with c1:
+        troom_heating = st.number_input('Reference Air Temperature - troom (°C)  ',value=26)
+    with c2:
+        tgr_heating = st.number_input('Room Temperature Gradient - tgr (°C/m)  ', value=0)
+    with c3:
+        ta_heating = st.number_input('Primary Air Temperature - ta (°C)  ',value=10)
+    with c4 :
+        twin_heating = st.number_input('Inlet Water Temperature -twin (°C)',value=15.0,min_value=13.0)
+    with c5:
+        twout_heating = st.number_input('Outlet Water Temperature (°C) -twout ',value=17.64)
+    
     
     ## COOLING INPUTS 
 
@@ -208,18 +238,16 @@ if option == 'Option 1 : Outlet Water Temperature':
     pma = round(pma,2)
     pw5_cooling = round(pw5_cooling,2)
     pw5_heating = round(pw5_heating,2)
+    qw5_cooling = round(qw5_cooling,2)
+    qw5_heating = round(qw5_heating)
+
         
     
     st.subheader("Results")
-    st.markdown("")
-    st.markdown("")
-    st.markdown('**Tableau récapitulatif**')
-    
     st.write('pwtest : ',w)
     st.write('plttest : ',PLT_cooling)
     
-    twout_cooling
-    twout_heating
+    
 
     option1 = [
         ['Motive (Primary) air flow rate' ,'(l/s)','qa',qa,'',qa,''],
@@ -239,7 +267,11 @@ if option == 'Option 1 : Outlet Water Temperature':
         ]
 
     df1 = pd.DataFrame(option1, columns =['   ',' ','', 'Cooling inputs','Cooling outputs','Heating inputs','Heating outputs'])
-    st.write(df1) 
+    
+    df1 = df1.style.set_properties(**{'text-align': 'left'}).set_table_styles(styles)
+    
+    
+    st.dataframe(df1,height=530)
     
     # submit button
     st.subheader("Add new values to table")
@@ -491,7 +523,7 @@ elif option == 'Option 2 : Water flow':
         ['Water pressure drop', '(kPa)','DPw','',dpw_cooling,'',dpw_heating]]
     
     df2 = pd.DataFrame(option2, columns =['   ',' ','', 'Cooling inputs','Cooling outputs','Heating inputs','Heating outputs'])
-    st.write(df2) 
+    st.dataframe(df2,height=530)
     
     
     d = {'ref' : 1,
