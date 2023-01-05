@@ -483,7 +483,7 @@ elif option == 'Option 2 : Water flow':
         ['Inlet water temperature', '(°C)','twi',twin_cooling,'',twin_heating,''],
         ['Outlet water temperature', '(°C) ','twout','',twout5_cooling,'',twout5_heating],
         ['Water temperature difference in out', '(°C)','dtw','',dtw5_cooling,'',dtw5_heating],
-        ['Temp. diff. room air and min water temp.','(°C)','dtrw','',dtrw5_cooling,'',dtrw5_heating]
+        ['Temp. diff. room air and min water temp.','(°C)','dtrw','',dtrw5_cooling,'',dtrw5_heating],
         ['Motive air pressure', '(W)', 'pma', '', pma, '', pma],
         ['Water side capacity', '(W)','pw','',pw5_cooling,'',pw5_cooling],
         ['Air side capacity', '(W)', 'pa','',pa_cooling,'',pa_heating],
