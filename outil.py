@@ -302,7 +302,7 @@ if option == 'Option 1 : Outlet Water Temperature':
     
     # add_ref = results_option1["ref"].max()+1
     
-    add_ref = int(add_ref)
+#     add_ref = int(add_ref)
     
     clickSubmit = st.button('Save values')
     
