@@ -300,7 +300,7 @@ if option == 'Option 1 : Outlet Water Temperature':
     
     results_option1["ref"][-1] = results_option1.max()+1
     
-    # add_ref = results_option1["ref"].max()+1
+    add_ref = results_option1["ref"].max()+1
     
 #     add_ref = int(add_ref)
     
