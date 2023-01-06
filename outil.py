@@ -339,7 +339,7 @@ if option == 'Option 1 : Outlet Water Temperature':
               }
          
     d = pd.DataFrame([newdata])
-    d
+#     d
     # d.to_csv('C:\\Users\\jarosquin\\Documents\\evost\\results_option1.csv',index=False)
          
     results_option1 = results_option1.append(d,ignore_index=True)
@@ -549,44 +549,44 @@ elif option == 'Option 2 : Water flow':
     st.write("dtrw heating : ", dtrw5_heating)
     
     
-    d = {'ref' : 1,
-        'Water flow' : qw_cooling,
-              'Primary Air Flow Rate': qa, 
-              'Primary Air Temperature': dtra_cooling,
-              'Reference Air Remperature': troom_cooling,
-              'Room Temperature Gradient': tgrvalue_cooling,
-              "Specific power" : PLTtest}
+#     d = {'ref' : 1,
+#         'Water flow' : qw_cooling,
+#               'Primary Air Flow Rate': qa, 
+#               'Primary Air Temperature': dtra_cooling,
+#               'Reference Air Remperature': troom_cooling,
+#               'Room Temperature Gradient': tgrvalue_cooling,
+#               "Specific power" : PLTtest}
     
     
-    d = pd.DataFrame([d],index=[0])
-    d
-    d.to_csv('results_option2.csv')
+#     d = pd.DataFrame([d],index=[0])
+#     d
+#     d.to_csv('results_option2.csv')
     
-    results_option2 = pd.read_csv('results_option2.csv')
-    results_option2
+#     results_option2 = pd.read_csv('results_option2.csv')
+#     results_option2
     
-    add_ref = int(results_option2["ref"].max()+1)
+#     add_ref = int(results_option2["ref"].max()+1)
     
-    clickSubmit = st.button('Save values')
+#     clickSubmit = st.button('Save values')
     
-    if clickSubmit == True: 
-         newdata = {'ref' : add_ref,
-              'Primary Air Flow Rate': qa, 
-              'Primary Air Temperature': dtra_cooling,
-              'Reference Air Remperature': troom_cooling,
-              'Room Temperature Gradient': tgr_cooling,
-              'Inlet Water Temperature': twin_cooling,
-              "dtw" : dtw_cooling,
-              "water flow rate" : qw3,
-              "water side capacity" : pw3,
-              "air side pressure" : pma}
-         st.write(newdata)
-         results_option2 = results_option2.append(newdata,ignore_index=True)
-         results_option2.to_csv('results_option2.csv',index=False)
-         #results_option1 = pd.concat([results_option1,d])
-         #open('results_option1.csv','a').write(results_option1.to_csv())
-    else :
-        st.markdown("Please submit to save")
+#     if clickSubmit == True: 
+#          newdata = {'ref' : add_ref,
+#               'Primary Air Flow Rate': qa, 
+#               'Primary Air Temperature': dtra_cooling,
+#               'Reference Air Remperature': troom_cooling,
+#               'Room Temperature Gradient': tgr_cooling,
+#               'Inlet Water Temperature': twin_cooling,
+#               "dtw" : dtw_cooling,
+#               "water flow rate" : qw3,
+#               "water side capacity" : pw3,
+#               "air side pressure" : pma}
+#          st.write(newdata)
+#          results_option2 = results_option2.append(newdata,ignore_index=True)
+#          results_option2.to_csv('results_option2.csv',index=False)
+#          #results_option1 = pd.concat([results_option1,d])
+#          #open('results_option1.csv','a').write(results_option1.to_csv())
+#     else :
+#         st.markdown("Please submit to save")
     
-    st.write(results_option2)
+#     st.write(results_option2)
     
