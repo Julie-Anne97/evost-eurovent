@@ -2,15 +2,14 @@ import pandas as pd
 import streamlit as st
 from PIL import Image
 from math import exp
-from datetime import date
-import os
+
 
 pd.set_option('display.max_columns', None)
 st.set_page_config(layout="wide")
-
-today = date.today()
 logo = Image.open("EVOST logo.png")
 
+
+# SIDEBAR
 
 with st.sidebar:    
     st.image(logo)
@@ -25,12 +24,14 @@ with st.sidebar:
     option = st.radio(
     "Select option",
     ('Option 1 : Outlet Water Temperature', 'Option 2 : Water flow'))
-    
+ 
+     
+# STYLES
     
 st.markdown("""
         <style>
                .css-18e3th9 {
-                    padding-top: 1rem;
+                    padding-top: 2rem;
                     padding-bottom: 10rem;
                     padding-left: 1rem;
                     padding-right: 1rem;
@@ -46,7 +47,6 @@ st.markdown("""
         </style>
         """, unsafe_allow_html=True)
 
-# style
 th_props = [
   ('font-size', '8px'),
   ('text-align', 'center'),
@@ -65,213 +65,208 @@ styles = [
   ]
 
     
-#STEP 1: choose one airflow from the table, then define the water temperatures (= enter qa & twin)
-
-st.subheader('Select inputs')
-
-
-
-col1,col2,col3 = st.columns(3)
-with col1:
-    qa = st.number_input('Motive (Primary) air flow rate - qa (l/s)',value=16.0,min_value=6.2)
- 
-      
+# PRESENTATION ET CALCULS 
+  
 if option == 'Option 1 : Outlet Water Temperature':
     
-    st.markdown('**Cooling inputs**')
-    c1,c2,c3,c4,c5 = st.columns(5)
-    with c1:
-        troom_cooling = st.number_input('Reference Air Temperature - troom (°C)',value=26)
-    with c2:
-        tgr_cooling = st.number_input('Room Temperature Gradient -tgr (°C/m)', value=0)
-    with c3:
-        ta_cooling = st.number_input('Primary Air Temperature - ta (°C)',value=10)
-    with c4 :
-        twin_cooling = st.number_input('Inlet Water Temperature - twin (°C)',value=15.0,min_value=13.0)
-    with c5:
-        twout_cooling = st.number_input('Outlet Water Temperature - twout (°C)',value=18)
+    col1,col2,col3 = st.columns([1,1,4])
     
-    st.markdown('**Heating inputs**')
-    c1,c2,c3,c4,c5 = st.columns(5)
-    with c1:
-        troom_heating = st.number_input('Reference Air Temperature - troom (°C)  ',value=26)
-    with c2:
-        tgr_heating = st.number_input('Room Temperature Gradient - tgr (°C/m)  ', value=0)
-    with c3:
-        ta_heating = st.number_input('Primary Air Temperature - ta (°C)  ',value=10)
-    with c4 :
-        twin_heating = st.number_input('Inlet Water Temperature -twin (°C)',value=15.0,min_value=13.0)
-    with c5:
-        twout_heating = st.number_input('Outlet Water Temperature (°C) -twout ',value=17.64)
+    ### STEP 1: choose one airflow from the table, then define the water temperatures (= enter qa & twin)
+    
+    with col1:
+        st.subheader('Select inputs')
+        qa = st.number_input('Motive (Primary) air flow rate - qa (l/s)',value=16.0,min_value=6.2)
+        st.markdown('**Cooling inputs**')
+        troom_cooling = st.number_input('Reference Air Temperature - troom (°C)',value=26.0,step=0.1)
+        tgr_cooling = st.number_input('Room Temperature Gradient -tgr °C/m)', value=0.0,step=0.1)
+        ta_cooling = st.number_input('Primary Air Temperature - ta (°C)',value=10.0,step=0.1)
+        twin_cooling = st.number_input('Inlet Water Temperature - twin (°C)',value=15.0,min_value=13.0,step=0.1)
+        twout_cooling = st.number_input('Outlet Water Temperature - twout (°C)',value=18.0,step=0.1)
+    with col2:
+        st.title("")
+        st.title("")
+        st.title("")
+        st.markdown('**Heating inputs**')
+        troom_heating = st.number_input('Reference Air Temperature - troom (°C)  ',value=26.0,step=0.1)
+        tgr_heating = st.number_input('Room Temperature Gradient-tgr (°C/m)', value=0.0, step=0.1)
+        ta_heating = st.number_input('Primary Air Temperature - ta (°C)  ',value=10.0,step=0.1)
+        twin_heating = st.number_input('Inlet Water Temperature -twin (°C)',value=15.0,min_value=13.0,step=0.1)
+        twout_heating = st.number_input('Outlet Water Temperature (°C) -twout ',value=17.64,step=0.1)
     
     
-    ## COOLING INPUTS 
-
-    @st.cache
-    def epsilon(x):
-        eqw = 0.588878-17.955*x+3140.21*(x**2)-125288*(x**3)+2.43832*(10**6)*(x**4)-2.57437*(10**7)*(x**5)+1.416*(10**8)*(x**6)-3.18428*(10**8)*(x**7)
-        return eqw
-    
-    @st.cache
-    def dpw_cooling_formula(x) :
-        dpw_c = 1.25-328.673*x+36889*(x**2)-1.601*(10**6)*(x**3)+4.0005*(10**7)*(x**4)-5.50149*(10**8)*(x**5)+3.90377*(10**9)*(x**6)-1.11607*(10**10)*(x**7)
-        return dpw_c
-    
-    @st.cache
-    def dpw_heating_formula(x):
-        dpw_h = 0.2-55*x+6473.81*(x**2)-243790*(x**3)+5.22321*(10**6)*(x**4)-6.2004*(10**7)*(x**5)+3.86905*(10**8)*(x**6)-9.92063*(10**8)*(x**7)
-        return dpw_h
-    
-
-    #STEP 2: calculate Dtw and Dtrw
-    dtw_cooling = twout_cooling-twin_cooling
-    dtrw_cooling = (troom_cooling + tgr_cooling) - ((twin_cooling+twout_cooling)/2)
-    
-    #STEP 3: read the data from the table correspondent to the airflow selected and calculate the specific power PLT (W/K)
-    # PLTtest = Pwtest / dtrwtest
-    # w = 35.06543 * qa + 186.32415
-    # w = -1992.88+734.415*qa-83.8188*(qa**2)+4.29282*(qa**3)-0.0805417*(qa**4)
-    
-    w = -1992.88+734.415*qa-83.8188*qa**2+4.29282*qa**3-0.0805417*qa**4
-    v = -26.1552+13.5864*qa-1.74758*qa**2+0.0946072*qa**3-0.00185556*qa**4
-    PLT_cooling = w / v
-    
-    #STEP 4: calculate the power (W) correspondent to correction factor equal to 1, using the Dtrw calculated
-    #Pw1 = (PLTtest * dtrw)/Eqw0.08ls
-    
-    eqw_ref = 1.06
-    
-    pw1_cooling = (PLT_cooling*dtrw_cooling)/eqw_ref
-    
-    #STEP 5: calculate the correspondet water flow, using the Dtw calculated
-    pw1_cooling = (PLT_cooling*dtrw_cooling)/eqw_ref
-    qw1_cooling = pw1_cooling / (dtw_cooling*4200)
-    
-    pw2_cooling = pw1_cooling*epsilon(qw1_cooling)
-    qw2_cooling = pw2_cooling / (dtw_cooling*4200)
-    
-    pw3_cooling = pw1_cooling*epsilon(qw2_cooling)
-    qw3_cooling = pw3_cooling / (dtw_cooling*4200)
-    
-    pw4_cooling = pw1_cooling*epsilon(qw3_cooling)
-    qw4_cooling = pw4_cooling / (dtw_cooling*4200)
-    
-    pw5_cooling = pw1_cooling*epsilon(qw4_cooling)
-    qw5_cooling = pw5_cooling / (dtw_cooling*4200)
-    
-    
-    
-    ## HEATING INPUTS
-    
-    
-    
-    #STEP 2: calculate Dtw and Dtrw
-    dtw_heating = twout_heating -twin_heating
-    dtrw_heating = (troom_heating+tgr_heating) - ((twin_heating +twout_heating)/2)
-    
-    
-    #STEP 3: read the data from the table correspondent to the airflow selected and calculate the specific power PLT (W/K)
-    # PLTtest = Pwtest / dtrwtest
-    w = 35.06543 * qa + 186.32415
-    v = -26.1552+13.5864*qa-1.74758*qa**2+0.0946072*qa**3-0.00185556*qa**4
-    PLT_heating = w / v 
-    
-    #STEP 4: calculate the power (W) correspondent to correction factor equal to 1, using the Dtrw calculated
-    #Pw1 = (PLTtest * dtrw)/Eqw0.08ls
-    eqw_ref = 1.06
-    pw1_heating = (PLT_heating*dtrw_heating)/eqw_ref
-    
-    #STEP 5: calculate the correspondet water flow, using the Dtw calculated
-    pw1_heating = (PLT_heating*dtrw_heating)/eqw_ref
-    qw1_heating = pw1_heating / (dtw_heating*4200)
-    
-    pw2_heating = pw1_heating*epsilon(qw1_heating)
-    qw2_heating = pw2_heating / (dtw_heating*4200)
-    
-    pw3_heating = pw1_heating*epsilon(qw2_heating)
-    qw3_heating = pw3_heating / (dtw_heating*4200)
-    
-    pw4_heating = pw1_heating*epsilon(qw3_heating)
-    qw4_heating = pw4_heating / (dtw_heating*4200)
-    
-    pw5_heating = pw1_heating*epsilon(qw4_heating)
-    qw5_heating = pw5_heating / (dtw_heating*4200)
-    
-    dtra_cooling = troom_cooling+tgr_cooling-ta_cooling
-    dtra_heating = troom_heating+tgr_heating-ta_heating
-
-    pma = 2131.77-589.557*qa+62.2699*(qa**2)-2.75638*(qa**3)+0.0463111*(qa**4)
-    pa_cooling=1.2*qa*dtra_cooling
-    pa_heating=1.2*qa*dtra_heating
-    
-    
-    pa_heating = 1.2*qa*(troom_heating+tgr_heating+(dtrw_heating/2))
-    pa_heating = round(pa_heating,2)
-    
-    ptot_cooling = round(pw5_cooling + pa_cooling,2)
-    ptot_heating = round(pw5_heating + pa_heating,2)
-    
-    dpw_cooling = dpw_cooling_formula(qw5_cooling)
-    dpw_heating = dpw_heating_formula(qw5_heating)
-    
-
-    
-    qa=round(qa,2)
-    qa = str(qa)
-    
-    troom_cooling = round(troom_cooling,2)
-    troom_heating = round(troom_heating,2)
-    twin_cooling = round(twin_cooling,2)
-    twin_heating = round(twin_heating,2)
-    twout_cooling = round(twout_cooling,2)
-    twout_heating = round(twout_heating,2)
-    tgr_cooling = round(tgr_cooling,2)
-    tgr_heating = round(tgr_heating,2)
-    dtra_cooling = round(dtra_cooling,2)
-    dtra_heating = round(dtra_heating,2)
-    dtw_cooling = round(dtw_cooling,2)
-    dtw_heating = round(dtw_heating,2)
-    qw5_cooling = round (qw5_cooling,4)
-    qw5_heating = round(qw5_heating,4)
-    dpw_cooling = round(dpw_cooling,2)
-    dpw_heating = round(dpw_heating,2)
-    pma = round(pma,2)
-    pw5_cooling = round(pw5_cooling,2)
-    pw5_heating = round(pw5_heating,2)
-    qw5_cooling = round(qw5_cooling,2)
-    qw5_heating = round(qw5_heating)
-
+    with col3: 
         
+        # CALCULS ET TABLEAU
+        
+        ## FORMULES
+        
+        def epsilon(x):
+            eqw = 0.588878-17.955*x+3140.21*(x**2)-125288*(x**3)+2.43832*(10**6)*(x**4)-2.57437*(10**7)*(x**5)+1.416*(10**8)*(x**6)-3.18428*(10**8)*(x**7)
+            return eqw
+        
+        def dpw_cooling_formula(x) :
+            dpw_c = 1.25-328.673*x+36889*(x**2)-1.601*(10**6)*(x**3)+4.0005*(10**7)*(x**4)-5.50149*(10**8)*(x**5)+3.90377*(10**9)*(x**6)-1.11607*(10**10)*(x**7)
+            return dpw_c
     
-    st.subheader("Results")
+        def dpw_heating_formula(x):
+            dpw_h = 0.2-55*x+6473.81*(x**2)-243790*(x**3)+5.22321*(10**6)*(x**4)-6.2004*(10**7)*(x**5)+3.86905*(10**8)*(x**6)-9.92063*(10**8)*(x**7)
+            return dpw_h
+        
+        ## CALCULS COOLING INPUTS 
+
+        ### STEP 2: calculate Dtw and Dtrw
+        
+        dtw_cooling = twout_cooling-twin_cooling
+        dtrw_cooling = (troom_cooling + tgr_cooling) - ((twin_cooling+twout_cooling)/2)
+        
+        ### STEP 3: read the data from the table correspondent to the airflow selected and calculate the specific power PLT (W/K)
+        
+        # PLTtest = Pwtest / dtrwtest
+        # w = 35.06543 * qa + 186.32415
+        # w = -1992.88+734.415*qa-83.8188*(qa**2)+4.29282*(qa**3)-0.0805417*(qa**4)
+        w = -1992.88+734.415*qa-83.8188*qa**2+4.29282*qa**3-0.0805417*qa**4
+        v = -26.1552+13.5864*qa-1.74758*qa**2+0.0946072*qa**3-0.00185556*qa**4
+        PLT_cooling = w / v
+        
+        ###STEP 4: calculate the power (W) correspondent to correction factor equal to 1, using the Dtrw calculated
+        
+        #Pw1 = (PLTtest * dtrw)/Eqw0.08ls
+        eqw_ref = 1.06
+        pw1_cooling = (PLT_cooling*dtrw_cooling)/eqw_ref
+    
+        ###STEP 5: calculate the correspondet water flow, using the Dtw calculated
+        
+        pw1_cooling = (PLT_cooling*dtrw_cooling)/eqw_ref
+        qw1_cooling = pw1_cooling / (dtw_cooling*4200)
+        
+        pw2_cooling = pw1_cooling*epsilon(qw1_cooling)
+        qw2_cooling = pw2_cooling / (dtw_cooling*4200)
+        
+        pw3_cooling = pw1_cooling*epsilon(qw2_cooling)
+        qw3_cooling = pw3_cooling / (dtw_cooling*4200)
+        
+        pw4_cooling = pw1_cooling*epsilon(qw3_cooling)
+        qw4_cooling = pw4_cooling / (dtw_cooling*4200)
+        
+        pw5_cooling = pw1_cooling*epsilon(qw4_cooling)
+        qw5_cooling = pw5_cooling / (dtw_cooling*4200)
+    
+        ## HEATING INPUTS
+     
+        ### STEP 2: calculate Dtw and Dtrw
+        
+        dtw_heating = twout_heating -twin_heating
+        dtrw_heating = (troom_heating+tgr_heating) - ((twin_heating +twout_heating)/2)
+    
+        ### STEP 3: read the data from the table correspondent to the airflow selected and calculate the specific power PLT (W/K)
+        
+        # PLTtest = Pwtest / dtrwtest
+        w = 35.06543 * qa + 186.32415
+        v = -26.1552+13.5864*qa-1.74758*qa**2+0.0946072*qa**3-0.00185556*qa**4
+        PLT_heating = w / v 
+    
+        ### STEP 4: calculate the power (W) correspondent to correction factor equal to 1, using the Dtrw calculated
+        
+        #Pw1 = (PLTtest * dtrw)/Eqw0.08ls
+        eqw_ref = 1.06
+        pw1_heating = (PLT_heating*dtrw_heating)/eqw_ref
+    
+        ### STEP 5: calculate the correspondet water flow, using the Dtw calculated
+        
+        pw1_heating = (PLT_heating*dtrw_heating)/eqw_ref
+        qw1_heating = pw1_heating / (dtw_heating*4200)
+        
+        pw2_heating = pw1_heating*epsilon(qw1_heating)
+        qw2_heating = pw2_heating / (dtw_heating*4200)
+        
+        pw3_heating = pw1_heating*epsilon(qw2_heating)
+        qw3_heating = pw3_heating / (dtw_heating*4200)
+        
+        pw4_heating = pw1_heating*epsilon(qw3_heating)
+        qw4_heating = pw4_heating / (dtw_heating*4200)
+        
+        pw5_heating = pw1_heating*epsilon(qw4_heating)
+        qw5_heating = pw5_heating / (dtw_heating*4200)
+        
+        ## AUTRES CALCULS
+        
+        dtra_cooling = troom_cooling+tgr_cooling-ta_cooling
+        dtra_heating = troom_heating+tgr_heating-ta_heating
+
+        pma = 2131.77-589.557*qa+62.2699*(qa**2)-2.75638*(qa**3)+0.0463111*(qa**4)
+        pa_cooling=1.2*qa*dtra_cooling
+        pa_heating=1.2*qa*dtra_heating
+        
+        pa_heating = 1.2*qa*(troom_heating+tgr_heating+(dtrw_heating/2))
+        pa_heating = round(pa_heating,2)
+        
+        ptot_cooling = round(pw5_cooling + pa_cooling,2)
+        ptot_heating = round(pw5_heating + pa_heating,2)
+        
+        dpw_cooling = dpw_cooling_formula(qw5_cooling)
+        dpw_heating = dpw_heating_formula(qw5_heating)
+    
+
+    
+        qa=round(qa,2)
+        qa = str(qa)
+        troom_cooling = round(troom_cooling,2)
+        troom_heating =round(troom_heating,2)
+        twin_cooling =round(twin_cooling,2)
+        twin_heating =round(twin_heating,2)
+        twout_cooling= round(twout_cooling,2)
+        twout_heating  =round(twout_heating,2)
+        tgr_cooling=round(tgr_cooling,2)
+        tgr_heating =round(tgr_heating,2)
+        dtra_cooling = round(dtra_cooling,2)
+        dtra_heating = round(dtra_heating,2)
+        dtw_cooling = round(dtw_cooling,2)
+        dtw_heating = round(dtw_heating,2)
+        qw5_cooling=round (qw5_cooling,4)
+        qw5_heating = round(qw5_heating,4)
+        dpw_cooling = round(dpw_cooling,2)
+        dpw_heating = round(dpw_heating,2)
+        pma = round(pma,2)
+        pw5_cooling = round(pw5_cooling,2)
+        pw5_heating =round(pw5_heating,2)
+        qw5_cooling=round(qw5_cooling,2)
+        qw5_heating=round(qw5_heating)
+        pa_cooling=round(pa_cooling,2)
+        pa_heating = round(pa_heating,2)
+        ptot_cooling=round(ptot_cooling,2)
+        ptot_heating=round(ptot_heating,2)
+        dpw_cooling=round(dpw_cooling,2)
+        dpw_heating=round(dpw_heating,2)
+
+        ## TABLEAU RECAPITULATIF
+        
+        st.subheader("Results")
+
+
+        option1 = [
+            ['Motive (Primary) air flow rate' ,'(l/s)','qa',qa,'',qa,''],
+            ['Reference air temperature', '(°C)','troom', troom_cooling,'',troom_heating,''],
+            ['Room temperature gradient','','tgr',tgr_cooling,'',tgr_heating,''],
+            ['Primary (Motive) air temperature', '(°C)','dtra',dtra_cooling,"",dtra_heating,""],
+            ['Inlet water temperature','(°C)','twi',twin_cooling,'',twin_heating,''],
+            ['Outlet water temperature','(°C) ','twout',twout_cooling,'',twout_heating,''],
+            ['Water temperature difference in out', '(°C)','dtw','',dtw_cooling,'',dtw_heating],
+            ['Temp. diff. room air and mean water temp ','(K)','dtrw','','','',''],
+            ['Water flow rate','(l/s)','qw','',qw5_cooling,'',qw5_heating],
+            ['Motive air pressure' ,'(W)', 'pma', '', pma, '', pma],
+            ['Water side capacity','(W)','pw','',pw5_cooling,'',pw5_cooling],
+            ['Air side capacity', '(W)', 'pa','',pa_cooling,'',pa_heating],
+            ['Total capacity', '(W)','ptot', '', ptot_cooling,'',ptot_heating],
+            ['Water pressure drop', '(kPa)','DPw','',dpw_cooling,'',dpw_heating]
+            ]
+
+        df1 = pd.DataFrame(option1, columns =['   ',' ','', 'Cooling inputs','Cooling outputs','Heating inputs','Heating outputs'])
+        
+        
+        st.dataframe(df1,height=530)
+    
     st.write('pwtest : ',w)
     st.write('plttest : ',PLT_cooling)
-    
-    
-
-    option1 = [
-        ['Motive (Primary) air flow rate' ,'(l/s)','qa',qa,'',qa,''],
-        ['Reference air temperature', '(°C)','troom', troom_cooling,'',troom_heating,''],
-        ['Room temperature gradient','','tgr',tgr_cooling,'',tgr_heating,''],
-        ['Primary (Motive) air temperature', '(°C)','dtra',dtra_cooling,"",dtra_heating,""],
-        ['Inlet water temperature','(°C)','twi',twin_cooling,'',twin_heating,''],
-        ['Outlet water temperature','(°C) ','twout',twout_cooling,'',twout_heating,''],
-        ['Water temperature difference in out', '(°C)','dtw','',dtw_cooling,'',dtw_heating],
-        ['Temp. diff. room air and mean water temp ','(K)','dtrw','','','',''],
-        ['Water flow rate','(l/s)','qw','',qw5_cooling,'',qw5_heating],
-        ['Motive air pressure' ,'(W)', 'pma', '', pma, '', pma],
-        ['Water side capacity','(W)','pw','',pw5_cooling,'',pw5_cooling],
-        ['Air side capacity', '(W)', 'pa','',pa_cooling,'',pa_heating],
-        ['Total capacity', '(W)','ptot', '', ptot_cooling,'',ptot_heating],
-        ['Water pressure drop', '(kPa)','DPw','',dpw_cooling,'',dpw_heating]
-        ]
-
-    df1 = pd.DataFrame(option1, columns =['   ',' ','', 'Cooling inputs','Cooling outputs','Heating inputs','Heating outputs'])
-    
-    df1 = df1.style.set_properties(**{'text-align': 'left'}).set_table_styles(styles)
-    
-    
-    st.dataframe(df1,height=530)
     
     # submit button
     st.subheader("Add new values to table")
