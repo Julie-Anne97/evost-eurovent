@@ -42,7 +42,7 @@ st.markdown("""
                     padding-bottom: 3.5rem;
                     padding-left: 1rem;
                 }
-                div[class*="stNumberInput"] label {font-size: 12px;}
+                div[class*="stNumberInput"] label {font-size: 10px;}
                 input {font-size: 0.66rem !important;}
         </style>
         """, unsafe_allow_html=True)
@@ -83,7 +83,6 @@ if option == 'Option 1 : Outlet Water Temperature':
         twin_cooling = st.number_input('Inlet Water Temperature - twin (°C)',value=15.0,min_value=13.0,step=0.1)
         twout_cooling = st.number_input('Outlet Water Temperature - twout (°C)',value=18.0,step=0.1)
     with col2:
-        st.title("")
         st.title("")
         st.title("")
         st.title("")
