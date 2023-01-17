@@ -7,8 +7,8 @@ from PIL import Image
 from math import exp
 
 pd.set_option('display.max_columns', None)
-st.set_page_config(layout="wide")
 logo = Image.open("EVOST logo.png")
+st.set_page_config(page_title="EVOST EUROVENT",page_icon=logo,layout="wide",)
 
 
 # CONFIGURATIONS
@@ -23,6 +23,14 @@ logo = Image.open("EVOST logo.png")
 #     shutil.copy("assets/css/table_style.css", css_file)
 
 # STYLES
+
+hide_menu_style = """
+        <style>
+        #MainMenu {visibility: hidden; }
+        footer {visibility: hidden;}
+        </style>
+        """
+st.markdown(hide_menu_style, unsafe_allow_html=True)
     
 st.markdown("""
          <head>
@@ -49,11 +57,8 @@ st.markdown("""
         </style>
         """, unsafe_allow_html=True)
 
-# st.markdown(
-#     """
-    
-#     """
-#     , unsafe_allow_html=True)
+st.write('<style>div.row-widget.stRadio > div{flex-direction:row;}</style>', unsafe_allow_html=True)        
+
 
 th_props = [
   ('font-size', '8px'),
@@ -80,10 +85,11 @@ with st.sidebar:
     st.image(logo)
     st.subheader("")
     st.markdown("**EVOST E1 – 1250 – 4p – L - H**")
-    st.container()
     # st.radio("Nozzle : ", ("E1","E1.1"), disabled=True)
     # st.radio("Model", (800, 1150, 1250, 1400, 2600), disabled=True,index=2)
-    st.radio("Tubes",(2,4),index=1)
+    tubes = st.radio("Tubes",(2,4),index=1)
+    if tubes == 2:
+        choose = st.radio("",("Cooling","Heating"))
     st.radio("Type : ", ("Horizontal","Vertical"), disabled=True)
     # st.write("Motive pressure – pmot = 350 Pa")
     option = st.radio(
@@ -119,20 +125,25 @@ def dpw_heating_formula(x):
 # PRESENTATION ET CALCULS 
   
 if option == 'Option 1 : ∆tw - Calculate water flow from given delta T':
-    
-    
     col1,col2,col3 = st.columns([1,1,4])
     ### STEP 1: choose one airflow from the table, then define the water temperatures (= enter qa & twin)
     with col1:
         st.subheader('Select inputs')
-        # container = st.container()
         measure = st.radio("Unité de mesure",("l/s","m³/h"))
         st.markdown('**Cooling inputs**')
-        troom_cooling = st.number_input('Reference Air Temperature - troom (°C)',value=26.0,step=0.1)
-        tgr_cooling = st.number_input('Room Temperature Gradient -tgr °C/m)', value=0.0,step=0.1)
-        ta_cooling = st.number_input('Primary (Motive) Air Temperature - ta (°C)',value=10.0,step=0.1)
-        twin_cooling = st.number_input('Inlet Water Temperature - twin (°C)',value=15.0,min_value=13.0,step=0.1)
-        twout_cooling = st.number_input('Outlet Water Temperature - twout (°C)',value=18.0,step=0.1)
+        if tubes == 4 :
+            troom_cooling = st.number_input('Reference Air Temperature - troom (°C)',value=26.0,step=0.1)
+            tgr_cooling = st.number_input('Room Temperature Gradient -tgr °C/m)', value=0.0,step=0.1)
+            ta_cooling = st.number_input('Primary (Motive) Air Temperature - ta (°C)',value=10.0,step=0.1)
+            twin_cooling = st.number_input('Inlet Water Temperature - twin (°C)',value=15.0,min_value=13.0,step=0.1)
+            twout_cooling = st.number_input('Outlet Water Temperature - twout (°C)',value=18.0,step=0.1)
+        elif tubes == 2 & Choose == 'Heating':
+            troom_cooling = st.number_input('Reference Air Temperature - troom (°C)',value=26.0,step=0.1,disabled=True)
+            tgr_cooling = st.number_input('Room Temperature Gradient -tgr °C/m)', value=0.0,step=0.1,disabled=True)
+            ta_cooling = st.number_input('Primary (Motive) Air Temperature - ta (°C)',value=10.0,step=0.1,disabled=True)
+            twin_cooling = st.number_input('Inlet Water Temperature - twin (°C)',value=15.0,min_value=13.0,step=0.1,disabled=True)
+            twout_cooling = st.number_input('Outlet Water Temperature - twout (°C)',value=18.0,step=0.1,disabled=True)   
+            
     with col2:
         st.title("")
         st.markdown("")
@@ -140,7 +151,6 @@ if option == 'Option 1 : ∆tw - Calculate water flow from given delta T':
             qa = st.number_input('Primary (Motive) air flow rate - qa (l/s)',value=16.0,min_value=7.8)
         elif measure == "m³/h":
             qa = st.number_input('Primary (Motive) air flow rate - qa (m³/h)',value=16.0,min_value=6.2)
-        
         st.markdown('**Heating inputs**')
         troom_heating = st.number_input('Reference Air Temperature - troom (°C)  ',value=26.0,step=0.1,)
         tgr_heating = st.number_input('Room Temperature Gradient-tgr (°C/m)', value=0.0, step=0.1)
@@ -232,7 +242,7 @@ if option == 'Option 1 : ∆tw - Calculate water flow from given delta T':
         ## AUTRES CALCULS
         
         dtra_cooling = troom_cooling+tgr_cooling-ta_cooling
-        dtra_heating = troom_heating+tgr_heating-ta_heating
+        dtra_heating = -(troom_heating+tgr_heating-ta_heating)
 
         pma = 2131.77-589.557*qa+62.2699*(qa**2)-2.75638*(qa**3)+0.0463111*(qa**4)
         pa_cooling=1.2*qa*dtra_cooling
@@ -278,6 +288,8 @@ if option == 'Option 1 : ∆tw - Calculate water flow from given delta T':
         ptot_heating=round(ptot_heating,2)
         dpw_cooling=round(dpw_cooling,2)
         dpw_heating=round(dpw_heating,2)
+        dtrw_cooling = round(dtrw_cooling,2)
+        dtrw_heating = round(dtrw_heating,2)
 
         ## TABLEAU RECAPITULATIF
         
@@ -294,8 +306,8 @@ if option == 'Option 1 : ∆tw - Calculate water flow from given delta T':
             ['Water temperature difference in out', '(°C)','dtw','',dtw_cooling,'',dtw_heating],
             ['Temp. diff. room air and mean water temp ','(K)','dtrw','',dtrw_cooling,'',dtrw_heating],
             ['Water flow rate','(l/s)','qw','',qw5_cooling,'',qw5_heating],
-            ['Motive air pressure' ,'(W)', 'pma', '', pma, '', pma],
-            ['Water side capacity','(W)','pw','',pw5_cooling,'',pw5_cooling],
+            ['Motive air pressure' ,'(Pa)', 'pma', '', pma, '', pma],
+            ['Water side capacity','(W)','pw','',pw5_cooling,'',pw5_heating],
             ['Air side capacity', '(W)', 'pa','',pa_cooling,'',pa_heating],
             ['Total capacity', '(W)','ptot', '', ptot_cooling,'',ptot_heating],
             ['Water pressure drop', '(kPa)','DPw','',dpw_cooling,'',dpw_heating]
@@ -410,7 +422,7 @@ elif option == 'Option 2 : qw - Calculate delta T from given water flow':
         tgr_heating = st.number_input('Room Temperature Gradient-tgr (°C/m)', value=0.0, step=0.1)
         ta_heating = st.number_input('Primary (Motive) Air Temperature - ta (°C)  ',value=10.0,step=0.1)
         twin_heating = st.number_input('Inlet Water Temperature -twin (°C)',value=15.0,min_value=13.0,step=0.1)
-        qw_heating = st.number_input('Water flow rate  -qw (l/s)',value=0.08,step=0.1)
+        qw_heating = st.number_input('Water flow rate  -qw (l/s)',value=0.08,step=0.1,max_value=38.5)
     
     
     with col3: 
@@ -508,7 +520,7 @@ elif option == 'Option 2 : qw - Calculate delta T from given water flow':
 
         #Autres formules
         
-        dtra_cooling = -(troom_cooling + tgr_cooling - ta_cooling)
+        dtra_cooling = (troom_cooling + tgr_cooling - ta_cooling)
         dtra_heating = -(troom_heating + tgr_heating - ta_heating)
 
         dpw_cooling = dpw_cooling_formula(qw_cooling)
@@ -542,6 +554,10 @@ elif option == 'Option 2 : qw - Calculate delta T from given water flow':
         ptot_heating = round(ptot_heating,2)
         dpw_cooling = round(dpw_cooling,2)
         dpw_heating = round(dpw_heating,2)
+        dtra_cooling = round(dtra_cooling,2)
+        dtra_heating = round(dtra_heating,2)
+        
+
         
         st.subheader("Results")
         
@@ -567,8 +583,8 @@ elif option == 'Option 2 : qw - Calculate delta T from given water flow':
             ['Outlet water temperature', '(°C) ','twout','',twout5_cooling,'',twout5_heating],
             ['Water temperature difference in out', '(°C)','dtw','',dtw5_cooling,'',dtw5_heating],
             ['Temp. diff. room air and min water temp.','(°C)','dtrw','',dtrw5_cooling,'',dtrw5_heating],
-            ['Motive air pressure', '(W)', 'pma', '', pma, '', pma],
-            ['Water side capacity', '(W)','pw','',pw5_cooling,'',pw5_cooling],
+            ['Motive air pressure', '(Pa)', 'pma', '', pma, '', pma],
+            ['Water side capacity', '(W)','pw','',pw5_cooling,'',pw5_heating],
             ['Air side capacity', '(W)', 'pa','',pa_cooling,'',pa_heating],
             ['Total capacity', '(W)','ptot', '', ptot_cooling,'',ptot_heating],
             ['Water pressure drop', '(kPa)','DPw','',dpw_cooling,'',dpw_heating]]
@@ -576,6 +592,13 @@ elif option == 'Option 2 : qw - Calculate delta T from given water flow':
         df2 = pd.DataFrame(option2, columns =['   ',' ','', 'Cooling inputs','Cooling outputs','Heating inputs','Heating outputs'])
         st.dataframe(df2,height=530)
         
+    
+    st.write("pw1_heating : ",pw1_heating)
+    st.write("pw2_heating : ",pw2_heating)
+    st.write("pw3_heating : ",pw3_heating)
+    st.write("pw4_heating : ",pw4_heating)
+    st.write("pw5_heating : ",pw5_heating)
+    
     st.write("eqw_ref : ",eqw_ref)
     st.write("dtrw cooling : ",dtrw5_cooling)
     st.write("dtrw heating : ", dtrw5_heating)
