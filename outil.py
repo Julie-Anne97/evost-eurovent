@@ -36,7 +36,7 @@ with st.sidebar:
     # st.write("Motive pressure – pmot = 350 Pa")
     option = st.radio(
     "Select option",
-    ('Option 1 : Outlet Water Temperature', 'Option 2 : Water flow'))
+    ('Option 1 : ∆tw - Calculate water flow from given delta T', 'Option 2 : qw - Calculate delta T from given water flow'))
  
      
 # STYLES
@@ -85,18 +85,49 @@ styles = [
   dict(selector="td", props=td_props)
   ]
 
+
+#FORMULES 
+        
+# def epsilon_cooling(x):
+#     eqw = 0.588878-17.955*x+3140.21*(x**2)-125288*(x**3)+2.43832*(10**6)*(x**4)-2.57437*(10**7)*(x**5)+1.416*(10**8)*(x**6)-3.18428*(10**8)*(x**7)
+#     return eqw
+        
+def epsilon_cooling(x):
+            eqw =0.588878-17.955*x+3140.21*(x**2)-125288*(x**3)+2438320*(x**4)-25743700*(x**5)+141600000*(x**6)-318428000*(x**7)
+            return eqw
+        
+def epsilon_heating(x):
+            eqw =(0.588878-17.955*x+3140.21*(x**2)-125288*(x**3)+2438320*(x**4)-25743700*(x**5)+141600000*(x**6)-318428000*(x**7))*0.66
+            return eqw
+        
+def dpw_cooling_formula(x) :
+            dpw_c = 1.25-328.673*x+36889*(x**2)-1.601*(10**6)*(x**3)+4.0005*(10**7)*(x**4)-5.50149*(10**8)*(x**5)+3.90377*(10**9)*(x**6)-1.11607*(10**10)*(x**7)
+            return dpw_c
+    
+def dpw_heating_formula(x):
+            dpw_h = 0.2-55*x+6473.81*(x**2)-243790*(x**3)+5.22321*(10**6)*(x**4)-6.2004*(10**7)*(x**5)+3.86905*(10**8)*(x**6)-9.92063*(10**8)*(x**7)
+            return dpw_h
+        
+
     
 # PRESENTATION ET CALCULS 
   
-if option == 'Option 1 : Outlet Water Temperature':
+if option == 'Option 1 : ∆tw - Calculate water flow from given delta T':
+    
+    st.subheader('Select inputs')
+    
+    c1,c2 = st.columns([1,5])
+    with c1:
+        with st.container():
+            mesure = st.radio("",("l/s","m³/h"))
+            if mesure == 'l/s' :
+                qa = st.number_input('Motive (Primary) air flow rate - qa (l/s)',value=16.0,min_value=7.8)
+            elif mesure == "m³/h":
+                qa = st.number_input('Motive (Primary) air flow rate - qa (m³/h)',value=16.0,min_value=6.2)
     
     col1,col2,col3 = st.columns([1,1,4])
-    
     ### STEP 1: choose one airflow from the table, then define the water temperatures (= enter qa & twin)
-    
     with col1:
-        st.subheader('Select inputs')
-        qa = st.number_input('Motive (Primary) air flow rate - qa (l/s)',value=16.0,min_value=6.2)
         st.markdown('**Cooling inputs**')
         troom_cooling = st.number_input('Reference Air Temperature - troom (°C)',value=26.0,step=0.1)
         tgr_cooling = st.number_input('Room Temperature Gradient -tgr °C/m)', value=0.0,step=0.1)
@@ -118,20 +149,6 @@ if option == 'Option 1 : Outlet Water Temperature':
     with col3: 
         
         # CALCULS ET TABLEAU
-        
-        ## FORMULES
-        
-        def epsilon(x):
-            eqw = 0.588878-17.955*x+3140.21*(x**2)-125288*(x**3)+2.43832*(10**6)*(x**4)-2.57437*(10**7)*(x**5)+1.416*(10**8)*(x**6)-3.18428*(10**8)*(x**7)
-            return eqw
-        
-        def dpw_cooling_formula(x) :
-            dpw_c = 1.25-328.673*x+36889*(x**2)-1.601*(10**6)*(x**3)+4.0005*(10**7)*(x**4)-5.50149*(10**8)*(x**5)+3.90377*(10**9)*(x**6)-1.11607*(10**10)*(x**7)
-            return dpw_c
-    
-        def dpw_heating_formula(x):
-            dpw_h = 0.2-55*x+6473.81*(x**2)-243790*(x**3)+5.22321*(10**6)*(x**4)-6.2004*(10**7)*(x**5)+3.86905*(10**8)*(x**6)-9.92063*(10**8)*(x**7)
-            return dpw_h
         
         ## CALCULS COOLING INPUTS 
 
@@ -160,16 +177,16 @@ if option == 'Option 1 : Outlet Water Temperature':
         pw1_cooling = (PLT_cooling*dtrw_cooling)/eqw_ref
         qw1_cooling = pw1_cooling / (dtw_cooling*4200)
         
-        pw2_cooling = pw1_cooling*epsilon(qw1_cooling)
+        pw2_cooling = pw1_cooling*epsilon_cooling(qw1_cooling)
         qw2_cooling = pw2_cooling / (dtw_cooling*4200)
         
-        pw3_cooling = pw1_cooling*epsilon(qw2_cooling)
+        pw3_cooling = pw1_cooling*epsilon_cooling(qw2_cooling)
         qw3_cooling = pw3_cooling / (dtw_cooling*4200)
         
-        pw4_cooling = pw1_cooling*epsilon(qw3_cooling)
+        pw4_cooling = pw1_cooling*epsilon_cooling(qw3_cooling)
         qw4_cooling = pw4_cooling / (dtw_cooling*4200)
         
-        pw5_cooling = pw1_cooling*epsilon(qw4_cooling)
+        pw5_cooling = pw1_cooling*epsilon_cooling(qw4_cooling)
         qw5_cooling = pw5_cooling / (dtw_cooling*4200)
     
         ## HEATING INPUTS
@@ -197,16 +214,16 @@ if option == 'Option 1 : Outlet Water Temperature':
         pw1_heating = (PLT_heating*dtrw_heating)/eqw_ref
         qw1_heating = pw1_heating / (dtw_heating*4200)
         
-        pw2_heating = pw1_heating*epsilon(qw1_heating)
+        pw2_heating = pw1_heating*epsilon_heating(qw1_heating)
         qw2_heating = pw2_heating / (dtw_heating*4200)
         
-        pw3_heating = pw1_heating*epsilon(qw2_heating)
+        pw3_heating = pw1_heating*epsilon_heating(qw2_heating)
         qw3_heating = pw3_heating / (dtw_heating*4200)
         
-        pw4_heating = pw1_heating*epsilon(qw3_heating)
+        pw4_heating = pw1_heating*epsilon_heating(qw3_heating)
         qw4_heating = pw4_heating / (dtw_heating*4200)
         
-        pw5_heating = pw1_heating*epsilon(qw4_heating)
+        pw5_heating = pw1_heating*epsilon_heating(qw4_heating)
         qw5_heating = pw5_heating / (dtw_heating*4200)
         
         ## AUTRES CALCULS
@@ -272,7 +289,7 @@ if option == 'Option 1 : Outlet Water Temperature':
             ['Inlet water temperature','(°C)','twi',twin_cooling,'',twin_heating,''],
             ['Outlet water temperature','(°C) ','twout',twout_cooling,'',twout_heating,''],
             ['Water temperature difference in out', '(°C)','dtw','',dtw_cooling,'',dtw_heating],
-            ['Temp. diff. room air and mean water temp ','(K)','dtrw','','','',''],
+            ['Temp. diff. room air and mean water temp ','(K)','dtrw','',dtrw_cooling,'',dtrw_heating],
             ['Water flow rate','(l/s)','qw','',qw5_cooling,'',qw5_heating],
             ['Motive air pressure' ,'(W)', 'pma', '', pma, '', pma],
             ['Water side capacity','(W)','pw','',pw5_cooling,'',pw5_cooling],
@@ -302,9 +319,9 @@ if option == 'Option 1 : Outlet Water Temperature':
     
     add_ref = results_option1["ref"].max()+1
     
-#     add_ref = int(add_ref)
+    add_ref = int(add_ref)
     
-    clickSubmit = st.button('Save values')
+    clickSubmit = st.button('Save the calculation in summmary table')
     
    
     newdata = {'ref' : add_ref,
@@ -339,7 +356,7 @@ if option == 'Option 1 : Outlet Water Temperature':
               }
          
     d = pd.DataFrame([newdata])
-#     d
+    # d
     # d.to_csv('C:\\Users\\jarosquin\\Documents\\evost\\results_option1.csv',index=False)
          
     results_option1 = results_option1.append(d,ignore_index=True)
@@ -366,7 +383,7 @@ if option == 'Option 1 : Outlet Water Temperature':
 
 
     
-elif option == 'Option 2 : Water flow':
+elif option == 'Option 2 : qw - Calculate delta T from given water flow':
     
     col1,col2,col3 = st.columns([1,1,4])
     
@@ -374,7 +391,7 @@ elif option == 'Option 2 : Water flow':
     
     with col1:
         st.subheader('Select inputs')
-        qa = st.number_input('Motive (Primary) air flow rate - qa (l/s)',value=16.0,min_value=6.2)
+        qa = st.number_input('Motive (Primary) air flow rate - qa (l/s)',value=16.0,min_value=7.8)
         st.markdown('**Cooling inputs**')
         troom_cooling = st.number_input('Reference Air Temperature - troom (°C)',value=26.0,step=0.1)
         tgr_cooling = st.number_input('Room Temperature Gradient -tgr °C/m)', value=0.0,step=0.1)
@@ -399,17 +416,17 @@ elif option == 'Option 2 : Water flow':
         
         ## FORMULES
         
-        def epsilon(x):
-            eqw = 0.588878-17.955*x+3140.21*(x**2)-125288*(x**3)+2.43832*(10**6)*(x**4)-2.57437*(10**7)*(x**5)+1.416*(10**8)*(x**6)-3.18428*(10**8)*(x**7)
-            return eqw
+        # def epsilon(x):
+        #     eqw = 0.588878-17.955*x+3140.21*(x**2)-125288*(x**3)+2.43832*(10**6)*(x**4)-2.57437*(10**7)*(x**5)+1.416*(10**8)*(x**6)-3.18428*(10**8)*(x**7)
+        #     return eqw
         
-        def dpw_cooling_formula(x) :
-            dpw_c = 1.25-328.673*x+36889*(x**2)-1.601*(10**6)*(x**3)+4.0005*(10**7)*(x**4)-5.50149*(10**8)*(x**5)+3.90377*(10**9)*(x**6)-1.11607*(10**10)*(x**7)
-            return dpw_c
+        # def dpw_cooling_formula(x) :
+        #     dpw_c = 1.25-328.673*x+36889*(x**2)-1.601*(10**6)*(x**3)+4.0005*(10**7)*(x**4)-5.50149*(10**8)*(x**5)+3.90377*(10**9)*(x**6)-1.11607*(10**10)*(x**7)
+        #     return dpw_c
         
-        def dpw_heating_formula(x):
-            dpw_h = 0.2-55*x+6473.81*(x**2)-243790*(x**3)+5.22321*(10**6)*(x**4)-6.2004*(10**7)*(x**5)+3.86905*(10**8)*(x**6)-9.92063*(10**8)*(x**7)
-            return dpw_h
+        # def dpw_heating_formula(x):
+        #     dpw_h = 0.2-55*x+6473.81*(x**2)-243790*(x**3)+5.22321*(10**6)*(x**4)-6.2004*(10**7)*(x**5)+3.86905*(10**8)*(x**6)-9.92063*(10**8)*(x**7)
+        #     return dpw_h
         
         ## COOLING INPUTS
         
@@ -421,7 +438,7 @@ elif option == 'Option 2 : Water flow':
         v = -26.1552+13.5864*qa-1.74758*qa**2+0.0946072*qa**3-0.00185556*qa**4
 
         PLT_cooling = w / v
-        eqw_ref = epsilon(qw_cooling)
+        eqw_ref = epsilon_cooling(qw_cooling)
     
 
         pw1_cooling = PLT_cooling*(dtrw1_cooling*eqw_ref/1.06)
@@ -458,38 +475,38 @@ elif option == 'Option 2 : Water flow':
 
         PLT_heating = w / dtrw1_heating
 
-        eqw_ref = epsilon(qw_heating)
+        eqw_ref = epsilon_heating(qw_heating)
 
 
-        pw1_heating = PLT_heating*(dtrw1_heating*eqw_ref/1.06)
+        pw1_heating = PLT_heating*(dtrw1_heating*eqw_ref/0.07)
         dtw1_heating = pw1_heating / (qw_heating *4200)
         twout1_heating = dtw1_heating + twin_heating
         
         dtrw2_heating = troom_heating - (twin_heating + twout1_heating)/2
-        pw2_heating = PLT_heating*(dtrw2_heating*eqw_ref/1.06)
+        pw2_heating = PLT_heating*(dtrw2_heating*eqw_ref/0.07)
         dtw2_heating = pw2_heating / (qw_heating *4200)
         twout2_heating = dtw2_heating + twin_heating
 
         dtrw3_heating = troom_heating - (twin_heating + twout2_heating)/2
-        pw3_heating = PLT_heating*(dtrw3_heating*eqw_ref/1.06)
+        pw3_heating = PLT_heating*(dtrw3_heating*eqw_ref/0.07)
         dtw3_heating = pw3_heating / (qw_heating *4200)
         twout3_heating = dtw3_heating + twin_heating
 
         dtrw4_heating = troom_heating - (twin_heating + twout3_heating)/2
-        pw4_heating = PLT_heating*(dtrw4_heating*eqw_ref/1.06)
+        pw4_heating = PLT_heating*(dtrw4_heating*eqw_ref/0.07)
         dtrw4_heating = pw4_heating / (qw_heating *4200)
         twout4_heating = dtrw4_heating + twin_heating
 
         dtrw5_heating = troom_heating - (twin_heating + twout4_heating)/2
-        pw5_heating = PLT_heating*(dtrw5_heating*eqw_ref/1.06)
+        pw5_heating = PLT_heating*(dtrw5_heating*eqw_ref/0.07)
         dtw5_heating = pw5_heating / (qw_cooling *4200)
         twout5_heating = dtw5_heating + twin_heating
 
 
         #Autres formules
         
-        dtra_cooling = troom_cooling + tgr_cooling - ta_cooling
-        dtra_heating = troom_heating + tgr_heating - ta_heating
+        dtra_cooling = -(troom_cooling + tgr_cooling - ta_cooling)
+        dtra_heating = -(troom_heating + tgr_heating - ta_heating)
 
         dpw_cooling = dpw_cooling_formula(qw_cooling)
         dpw_heating = dpw_heating_formula(qw_heating)
@@ -524,7 +541,19 @@ elif option == 'Option 2 : Water flow':
         dpw_heating = round(dpw_heating,2)
         
         st.subheader("Results")
-                
+        
+        if qw_cooling<0.025:
+            st.error("Water flow rate in cooling circuit is below the minimum permitted qwmin = 0.025 l/s", icon="🚨")
+            
+        if qw_heating<0.025:
+            st.error("Water flow rate in heating circuit is below the minimum permitted qwmin = 0.025 l/s",icon="🚨")
+        
+        if qw_cooling>1.0:
+            st.error("Water flow rate in cooling circuit is above the minimum permitted qwmin = 1.0 l/s",icon="🚨")
+        
+        if qw_heating>1.0:
+            st.error("Water flow rate in heating circuit is above the minimum permitted qwmin = 1.0 l/s",icon="🚨")
+        
         option2 = [
             ['Primary (Motive) air flow rate', '(l/s)','qa',qa,'',qa,''],
             ['Reference air temperature', '(°C)','troom', troom_cooling,'',troom_heating,''],
@@ -549,44 +578,44 @@ elif option == 'Option 2 : Water flow':
     st.write("dtrw heating : ", dtrw5_heating)
     
     
-#     d = {'ref' : 1,
-#         'Water flow' : qw_cooling,
-#               'Primary Air Flow Rate': qa, 
-#               'Primary Air Temperature': dtra_cooling,
-#               'Reference Air Remperature': troom_cooling,
-#               'Room Temperature Gradient': tgrvalue_cooling,
-#               "Specific power" : PLTtest}
+    d = {'ref' : 1,
+        'Water flow' : qw_cooling,
+              'Primary Air Flow Rate': qa, 
+              'Primary Air Temperature': dtra_cooling,
+              'Reference Air Remperature': troom_cooling,
+              'Room Temperature Gradient': tgrvalue_cooling,
+              "Specific power" : PLTtest}
     
     
-#     d = pd.DataFrame([d],index=[0])
-#     d
-#     d.to_csv('results_option2.csv')
+    d = pd.DataFrame([d],index=[0])
+    d
+    d.to_csv('results_option2.csv')
     
-#     results_option2 = pd.read_csv('results_option2.csv')
-#     results_option2
+    results_option2 = pd.read_csv('results_option2.csv')
+    results_option2
     
-#     add_ref = int(results_option2["ref"].max()+1)
+    add_ref = int(results_option2["ref"].max()+1)
     
-#     clickSubmit = st.button('Save values')
+    clickSubmit = st.button('Save the calculation in summary table')
     
-#     if clickSubmit == True: 
-#          newdata = {'ref' : add_ref,
-#               'Primary Air Flow Rate': qa, 
-#               'Primary Air Temperature': dtra_cooling,
-#               'Reference Air Remperature': troom_cooling,
-#               'Room Temperature Gradient': tgr_cooling,
-#               'Inlet Water Temperature': twin_cooling,
-#               "dtw" : dtw_cooling,
-#               "water flow rate" : qw3,
-#               "water side capacity" : pw3,
-#               "air side pressure" : pma}
-#          st.write(newdata)
-#          results_option2 = results_option2.append(newdata,ignore_index=True)
-#          results_option2.to_csv('results_option2.csv',index=False)
-#          #results_option1 = pd.concat([results_option1,d])
-#          #open('results_option1.csv','a').write(results_option1.to_csv())
-#     else :
-#         st.markdown("Please submit to save")
+    if clickSubmit == True: 
+         newdata = {'ref' : add_ref,
+              'Primary Air Flow Rate': qa, 
+              'Primary Air Temperature': dtra_cooling,
+              'Reference Air Remperature': troom_cooling,
+              'Room Temperature Gradient': tgr_cooling,
+              'Inlet Water Temperature': twin_cooling,
+              "dtw" : dtw_cooling,
+              "water flow rate" : qw3,
+              "water side capacity" : pw3,
+              "air side pressure" : pma}
+         st.write(newdata)
+         results_option2 = results_option2.append(newdata,ignore_index=True)
+         results_option2.to_csv('results_option2.csv',index=False)
+         #results_option1 = pd.concat([results_option1,d])
+         #open('results_option1.csv','a').write(results_option1.to_csv())
+    else :
+        st.markdown("Please submit to save")
     
-#     st.write(results_option2)
+    st.write(results_option2)
     
