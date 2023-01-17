@@ -6,6 +6,11 @@ import shutil
 from PIL import Image
 from math import exp
 
+pd.set_option('display.max_columns', None)
+st.set_page_config(layout="wide")
+logo = Image.open("EVOST logo.png")
+
+
 # CONFIGURATIONS
 
 # STREAMLIT_STATIC_PATH = Path(st.__path__[0]) / 'static'
@@ -17,9 +22,56 @@ from math import exp
 # if not css_file.exists():
 #     shutil.copy("assets/css/table_style.css", css_file)
 
-pd.set_option('display.max_columns', None)
-st.set_page_config(layout="wide")
-logo = Image.open("EVOST logo.png")
+# STYLES
+    
+st.markdown("""
+         <head>
+         <link rel="stylesheet" type="text/css" href=""C:\\Users\\jarosquin\\Documents\\evost\\styles.css"">
+         <head>   
+         <style>
+               .css-18e3th9 {
+                    padding-top: 2rem;
+                    padding-bottom: 10rem;
+                    padding-left: 1rem;
+                    padding-right: 1rem;
+                }
+               .css-1d391kg {
+                    padding-top: 3.5rem;
+                    padding-right: 1rem;
+                    padding-bottom: 3.5rem;
+                    padding-left: 1rem;
+                }
+                div[class*="stNumberInput"] label {font-size: 12px;}
+                input {font-size: 0.66rem !important;}
+                div[class*="stRadio"] label {font-size: 12px;}
+                input {font-size: 0.66rem !important;}
+                options {font-size: 0.66rem !important;}
+        </style>
+        """, unsafe_allow_html=True)
+
+# st.markdown(
+#     """
+    
+#     """
+#     , unsafe_allow_html=True)
+
+th_props = [
+  ('font-size', '8px'),
+  ('text-align', 'center'),
+  ('font-weight', 'bold'),
+  ('color', '#6d6d6d'),
+  ('background-color', '#f7ffff')
+  ]
+                               
+td_props = [
+  ('font-size', '12px')
+  ]
+                                 
+styles = [
+  dict(selector="th", props=th_props),
+  dict(selector="td", props=td_props)
+  ]
+
 
 
 # SIDEBAR
@@ -39,52 +91,6 @@ with st.sidebar:
     ('Option 1 : ∆tw - Calculate water flow from given delta T', 'Option 2 : qw - Calculate delta T from given water flow'))
  
      
-# STYLES
-    
-st.markdown("""
-        <style>
-               .css-18e3th9 {
-                    padding-top: 2rem;
-                    padding-bottom: 10rem;
-                    padding-left: 1rem;
-                    padding-right: 1rem;
-                }
-               .css-1d391kg {
-                    padding-top: 3.5rem;
-                    padding-right: 1rem;
-                    padding-bottom: 3.5rem;
-                    padding-left: 1rem;
-                }
-                div[class*="stNumberInput"] label {font-size: 12px;}
-                input {font-size: 0.66rem !important;}
-        </style>
-        """, unsafe_allow_html=True)
-
-st.markdown(
-    """
-    <head>
-    <link rel="stylesheet" type="text/css" href=""C:\\Users\\jarosquin\\Documents\\evost\\styles.css"">
-    <head>
-    """
-    , unsafe_allow_html=True)
-
-th_props = [
-  ('font-size', '8px'),
-  ('text-align', 'center'),
-  ('font-weight', 'bold'),
-  ('color', '#6d6d6d'),
-  ('background-color', '#f7ffff')
-  ]
-                               
-td_props = [
-  ('font-size', '12px')
-  ]
-                                 
-styles = [
-  dict(selector="th", props=th_props),
-  dict(selector="td", props=td_props)
-  ]
-
 
 #FORMULES 
         
@@ -114,34 +120,31 @@ def dpw_heating_formula(x):
   
 if option == 'Option 1 : ∆tw - Calculate water flow from given delta T':
     
-    st.subheader('Select inputs')
-    
-    c1,c2 = st.columns([1,5])
-    with c1:
-        with st.container():
-            mesure = st.radio("",("l/s","m³/h"))
-            if mesure == 'l/s' :
-                qa = st.number_input('Motive (Primary) air flow rate - qa (l/s)',value=16.0,min_value=7.8)
-            elif mesure == "m³/h":
-                qa = st.number_input('Motive (Primary) air flow rate - qa (m³/h)',value=16.0,min_value=6.2)
     
     col1,col2,col3 = st.columns([1,1,4])
     ### STEP 1: choose one airflow from the table, then define the water temperatures (= enter qa & twin)
     with col1:
+        st.subheader('Select inputs')
+        # container = st.container()
+        measure = st.radio("Unité de mesure",("l/s","m³/h"))
         st.markdown('**Cooling inputs**')
         troom_cooling = st.number_input('Reference Air Temperature - troom (°C)',value=26.0,step=0.1)
         tgr_cooling = st.number_input('Room Temperature Gradient -tgr °C/m)', value=0.0,step=0.1)
-        ta_cooling = st.number_input('Primary Air Temperature - ta (°C)',value=10.0,step=0.1)
+        ta_cooling = st.number_input('Primary (Motive) Air Temperature - ta (°C)',value=10.0,step=0.1)
         twin_cooling = st.number_input('Inlet Water Temperature - twin (°C)',value=15.0,min_value=13.0,step=0.1)
         twout_cooling = st.number_input('Outlet Water Temperature - twout (°C)',value=18.0,step=0.1)
     with col2:
         st.title("")
-        st.title("")
-        st.title("")
+        st.markdown("")
+        if measure == 'l/s' :
+            qa = st.number_input('Primary (Motive) air flow rate - qa (l/s)',value=16.0,min_value=7.8)
+        elif measure == "m³/h":
+            qa = st.number_input('Primary (Motive) air flow rate - qa (m³/h)',value=16.0,min_value=6.2)
+        
         st.markdown('**Heating inputs**')
         troom_heating = st.number_input('Reference Air Temperature - troom (°C)  ',value=26.0,step=0.1,)
         tgr_heating = st.number_input('Room Temperature Gradient-tgr (°C/m)', value=0.0, step=0.1)
-        ta_heating = st.number_input('Primary Air Temperature - ta (°C)  ',value=10.0,step=0.1)
+        ta_heating = st.number_input('Primary (Motive) Air Temperature - ta (°C)  ',value=10.0,step=0.1)
         twin_heating = st.number_input('Inlet Water Temperature -twin (°C)',value=15.0,min_value=13.0,step=0.1)
         twout_heating = st.number_input('Outlet Water Temperature (°C) -twout ',value=17.64,step=0.1)
     
@@ -282,7 +285,7 @@ if option == 'Option 1 : ∆tw - Calculate water flow from given delta T':
 
 
         option1 = [
-            ['Motive (Primary) air flow rate' ,'(l/s)','qa',qa,'',qa,''],
+            ['Primary (Motive) air flow rate' ,'(l/s)','qa',qa,'',qa,''],
             ['Reference air temperature', '(°C)','troom', troom_cooling,'',troom_heating,''],
             ['Room temperature gradient','','tgr',tgr_cooling,'',tgr_heating,''],
             ['Primary (Motive) air temperature', '(°C)','dtra',dtra_cooling,"",dtra_heating,""],
@@ -325,15 +328,15 @@ if option == 'Option 1 : ∆tw - Calculate water flow from given delta T':
     
    
     newdata = {'ref' : add_ref,
-             'Motive (primary) Air Flow Rate': qa,
+             'Primary (Motive) Air Flow Rate': qa,
              'Reference air temperature cooling' : troom_cooling,
              'Reference air temperature heating' : troom_heating,
              'Gradient cooling' : tgr_cooling,
              'Gradient heating' : tgr_heating,
              'Primary (Motive) Air Temperature Cooling' : dtra_cooling,
              'Primary (Motive) Air Temperature Heating' : dtra_heating,
-             'Primary Air Temperature cooling' : ta_cooling,
-             'Primary Air Temperature Heating' : ta_heating,
+             'Primary (Motive) Air Temperature cooling' : ta_cooling,
+             'Primary (Motive) Air Temperature Heating' : ta_heating,
              'Inlet water temperature cooling' : twin_cooling,
              'Inlet water temperature heating' : twin_heating,
              'Outlet Water Temperature cooling': twout_cooling,
@@ -391,11 +394,11 @@ elif option == 'Option 2 : qw - Calculate delta T from given water flow':
     
     with col1:
         st.subheader('Select inputs')
-        qa = st.number_input('Motive (Primary) air flow rate - qa (l/s)',value=16.0,min_value=7.8)
+        qa = st.number_input('Primary (Motive) air flow rate - qa (l/s)',value=16.0,min_value=7.8)
         st.markdown('**Cooling inputs**')
         troom_cooling = st.number_input('Reference Air Temperature - troom (°C)',value=26.0,step=0.1)
         tgr_cooling = st.number_input('Room Temperature Gradient -tgr °C/m)', value=0.0,step=0.1)
-        ta_cooling = st.number_input('Primary Air Temperature - ta (°C)',value=10.0,step=0.1)
+        ta_cooling = st.number_input('Primary (Motive) Air Temperature - ta (°C)',value=10.0,step=0.1)
         twin_cooling = st.number_input('Inlet Water Temperature - twin (°C)',value=15.0,min_value=13.0,step=0.1)
         qw_cooling = st.number_input('Water flow rate - qw (l/s)',value=0.08,step=0.1)
     with col2:
@@ -405,7 +408,7 @@ elif option == 'Option 2 : qw - Calculate delta T from given water flow':
         st.markdown('**Heating inputs**')
         troom_heating = st.number_input('Reference Air Temperature - troom (°C)  ',value=26.0,step=0.1)
         tgr_heating = st.number_input('Room Temperature Gradient-tgr (°C/m)', value=0.0, step=0.1)
-        ta_heating = st.number_input('Primary Air Temperature - ta (°C)  ',value=10.0,step=0.1)
+        ta_heating = st.number_input('Primary (Motive) Air Temperature - ta (°C)  ',value=10.0,step=0.1)
         twin_heating = st.number_input('Inlet Water Temperature -twin (°C)',value=15.0,min_value=13.0,step=0.1)
         qw_heating = st.number_input('Water flow rate  -qw (l/s)',value=0.08,step=0.1)
     
@@ -478,27 +481,27 @@ elif option == 'Option 2 : qw - Calculate delta T from given water flow':
         eqw_ref = epsilon_heating(qw_heating)
 
 
-        pw1_heating = PLT_heating*(dtrw1_heating*eqw_ref/0.07)
+        pw1_heating = PLT_heating*(dtrw1_heating*eqw_ref/0.7)
         dtw1_heating = pw1_heating / (qw_heating *4200)
         twout1_heating = dtw1_heating + twin_heating
         
         dtrw2_heating = troom_heating - (twin_heating + twout1_heating)/2
-        pw2_heating = PLT_heating*(dtrw2_heating*eqw_ref/0.07)
+        pw2_heating = PLT_heating*(dtrw2_heating*eqw_ref/0.7)
         dtw2_heating = pw2_heating / (qw_heating *4200)
         twout2_heating = dtw2_heating + twin_heating
 
         dtrw3_heating = troom_heating - (twin_heating + twout2_heating)/2
-        pw3_heating = PLT_heating*(dtrw3_heating*eqw_ref/0.07)
+        pw3_heating = PLT_heating*(dtrw3_heating*eqw_ref/0.7)
         dtw3_heating = pw3_heating / (qw_heating *4200)
         twout3_heating = dtw3_heating + twin_heating
 
         dtrw4_heating = troom_heating - (twin_heating + twout3_heating)/2
-        pw4_heating = PLT_heating*(dtrw4_heating*eqw_ref/0.07)
+        pw4_heating = PLT_heating*(dtrw4_heating*eqw_ref/0.7)
         dtrw4_heating = pw4_heating / (qw_heating *4200)
         twout4_heating = dtrw4_heating + twin_heating
 
         dtrw5_heating = troom_heating - (twin_heating + twout4_heating)/2
-        pw5_heating = PLT_heating*(dtrw5_heating*eqw_ref/0.07)
+        pw5_heating = PLT_heating*(dtrw5_heating*eqw_ref/0.7)
         dtw5_heating = pw5_heating / (qw_cooling *4200)
         twout5_heating = dtw5_heating + twin_heating
 
