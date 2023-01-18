@@ -4,11 +4,12 @@ import streamlit.components.v1 as components
 import pathlib 
 import shutil
 from PIL import Image
-from math import exp
+from decimal import Decimal, localcontext
 
 pd.set_option('display.max_columns', None)
 logo = Image.open("EVOST logo.png")
-st.set_page_config(page_title="EVOST EUROVENT",page_icon=logo,layout="wide",)
+machine = Image.open('Image115.png')
+st.set_page_config(page_title="EVOST EUROVENT",page_icon=machine,layout="wide")
 
 
 # CONFIGURATIONS
@@ -100,17 +101,21 @@ with st.sidebar:
 
 #FORMULES 
         
-# def epsilon_cooling(x):
-#     eqw = 0.588878-17.955*x+3140.21*(x**2)-125288*(x**3)+2.43832*(10**6)*(x**4)-2.57437*(10**7)*(x**5)+1.416*(10**8)*(x**6)-3.18428*(10**8)*(x**7)
-#     return eqw
-        
 def epsilon_cooling(x):
-            eqw =0.588878-17.955*x+3140.21*(x**2)-125288*(x**3)+2438320*(x**4)-25743700*(x**5)+141600000*(x**6)-318428000*(x**7)
-            return eqw
+    eqw = 0.588878-17.955*x+3140.21*(x**2)-125288*(x**3)+2.43832*(10**6)*(x**4)-2.57437*(10**7)*(x**5)+1.416*(10**8)*(x**6)-3.18428*(10**8)*(x**7)
+    return eqw
         
+# def epsilon_cooling(x):
+#     eqw =0.588878-17.955*x+3140.21*(x**2)-125288*(x**3)+2438320*(x**4)-25743700*(x**5)+141600000*(x**6)-318428000*(x**7)
+#     return eqw
+
 def epsilon_heating(x):
-            eqw =(0.588878-17.955*x+3140.21*(x**2)-125288*(x**3)+2438320*(x**4)-25743700*(x**5)+141600000*(x**6)-318428000*(x**7))*0.66
-            return eqw
+    eqw = (0.588878-17.955*x+3140.21*(x**2)-125288*(x**3)+2.43832*(10**6)*(x**4)-2.57437*(10**7)*(x**5)+1.416*(10**8)*(x**6)-3.18428*(10**8)*(x**7))*0.66
+    return eqw
+        
+# def epsilon_heating(x):
+#             eqw =(0.588878-17.955*x+3140.21*(x**2)-125288*(x**3)+2438320*(x**4)-25743700*(x**5)+141600000*(x**6)-318428000*(x**7))*0.66
+#             return eqw
         
 def dpw_cooling_formula(x) :
             dpw_c = 1.25-328.673*x+36889*(x**2)-1.601*(10**6)*(x**3)+4.0005*(10**7)*(x**4)-5.50149*(10**8)*(x**5)+3.90377*(10**9)*(x**6)-1.11607*(10**10)*(x**7)
@@ -170,6 +175,11 @@ if option == 'Option 1 : ∆tw - Calculate water flow from given delta T':
         dtw_cooling = twout_cooling-twin_cooling
         dtrw_cooling = (troom_cooling + tgr_cooling) - ((twin_cooling+twout_cooling)/2)
         
+        dtw_cooling = round(dtw_cooling,2)
+        st.write("step 2 dtw_cooling : ",dtw_cooling)
+        dtrw_cooling = round(dtrw_cooling,2)
+        st.write("step 2 dtrw_cooling : ", dtrw_cooling)
+        
         ### STEP 3: read the data from the table correspondent to the airflow selected and calculate the specific power PLT (W/K)
         
         # PLTtest = Pwtest / dtrwtest
@@ -179,11 +189,21 @@ if option == 'Option 1 : ∆tw - Calculate water flow from given delta T':
         v = -26.1552+13.5864*qa-1.74758*qa**2+0.0946072*qa**3-0.00185556*qa**4
         PLT_cooling = w / v
         
+        w = round(w,2)
+        st.write("step 3 w : ",w)
+        v = round(v,2)
+        st.write("step 3 v : ",v)
+        PLT_cooling = round(PLT_cooling,2)
+        st.write("step 3 plt_cooling : ",PLT_cooling)
         ###STEP 4: calculate the power (W) correspondent to correction factor equal to 1, using the Dtrw calculated
         
         #Pw1 = (PLTtest * dtrw)/Eqw0.08ls
         eqw_ref = 1.06
         pw1_cooling = (PLT_cooling*dtrw_cooling)/eqw_ref
+        
+        st.write("step 4 eqw_ref ",eqw_ref)
+        pw1_cooling = round(pw1_cooling,2)
+        st.write("step 4 pw1 cooling : ",pw1_cooling)
     
         ###STEP 5: calculate the correspondet water flow, using the Dtw calculated
         
@@ -201,13 +221,28 @@ if option == 'Option 1 : ∆tw - Calculate water flow from given delta T':
         
         pw5_cooling = pw1_cooling*epsilon_cooling(qw4_cooling)
         qw5_cooling = pw5_cooling / (dtw_cooling*4200)
+        
+        qw1_cooling = round(qw1_cooling,2)
+        pw2_cooling = round(pw2_cooling,2)
+        qw2_cooling = round(qw2_cooling,2)
+        pw3_cooling = round(pw3_cooling,2)
+        qw3_cooling = round(qw3_cooling,2)
+        pw4_cooling = round(pw4_cooling,2)
+        qw4_cooling = round(qw4_cooling,2)
+        pw5_cooling = round(pw5_cooling,2)
+        qw5_cooling = round(qw5_cooling,2)
     
         ## HEATING INPUTS
      
         ### STEP 2: calculate Dtw and Dtrw
         
-        dtw_heating = twout_heating -twin_heating
-        dtrw_heating = (troom_heating+tgr_heating) - ((twin_heating +twout_heating)/2)
+        dtw_heating = - twout_heating + twin_heating
+        dtrw_heating = - (troom_heating+tgr_heating) + ((twin_heating +twout_heating)/2)
+        
+        dtw_heating = round(dtw_heating,2)
+        dtrw_heating = round(dtrw_heating,2)
+        st.write("step 2 dt_heating : ",dtw_heating)
+        st.write("step 2 dtrw_heating",dtrw_heating)
     
         ### STEP 3: read the data from the table correspondent to the airflow selected and calculate the specific power PLT (W/K)
         
@@ -215,6 +250,12 @@ if option == 'Option 1 : ∆tw - Calculate water flow from given delta T':
         w = 35.06543 * qa + 186.32415
         v = -26.1552+13.5864*qa-1.74758*qa**2+0.0946072*qa**3-0.00185556*qa**4
         PLT_heating = w / v 
+        
+        w = round(w,2)
+        v=round(v,2)
+        PLT_heating = round(PLT_heating,2)
+        st.write("step 3 w heating", w)
+        
     
         ### STEP 4: calculate the power (W) correspondent to correction factor equal to 1, using the Dtrw calculated
         
@@ -225,28 +266,45 @@ if option == 'Option 1 : ∆tw - Calculate water flow from given delta T':
         ### STEP 5: calculate the correspondet water flow, using the Dtw calculated
         
         pw1_heating = (PLT_heating*dtrw_heating)/eqw_ref
+        pw1_heating = round(pw1_heating,2)
         qw1_heating = pw1_heating / (dtw_heating*4200)
+        qw1_heating = round(qw1_heating,2)
         
         pw2_heating = pw1_heating*epsilon_heating(qw1_heating)
+        pw2_heating = round(pw2_heating,2)
         qw2_heating = pw2_heating / (dtw_heating*4200)
+        qw2_heating = round(qw2_heating,2)
         
         pw3_heating = pw1_heating*epsilon_heating(qw2_heating)
+        pw3_heating = round(pw3_heating)
         qw3_heating = pw3_heating / (dtw_heating*4200)
+        qw3_heating  = round(qw3_heating,2)
         
         pw4_heating = pw1_heating*epsilon_heating(qw3_heating)
+        pw4_heating = round(pw4_heating,2)
         qw4_heating = pw4_heating / (dtw_heating*4200)
+        qw4_heating = round(pw4_heating,2)
         
         pw5_heating = pw1_heating*epsilon_heating(qw4_heating)
+        pw5_heating = round(pw5_heating,2)
         qw5_heating = pw5_heating / (dtw_heating*4200)
+        qw5_heating = round(qw5_heating,2)
+        
+        
         
         ## AUTRES CALCULS
         
         dtra_cooling = troom_cooling+tgr_cooling-ta_cooling
         dtra_heating = -(troom_heating+tgr_heating-ta_heating)
+        dtra_cooling = round(dtra_cooling,2)
+        dtra_heating = round(dtra_heating,2)
 
         pma = 2131.77-589.557*qa+62.2699*(qa**2)-2.75638*(qa**3)+0.0463111*(qa**4)
+        pma = round(pma,2)
         pa_cooling=1.2*qa*dtra_cooling
         pa_heating=1.2*qa*dtra_heating
+        pa_cooling = round(pa_cooling,2)
+        pa_heating = round(pa_heating,2)
         
         pa_heating = 1.2*qa*(troom_heating+tgr_heating+(dtrw_heating/2))
         pa_heating = round(pa_heating,2)
@@ -484,9 +542,13 @@ elif option == 'Option 2 : qw - Calculate delta T from given water flow':
         #HEATING INPUTS
         
         
-        dtrw1_heating = 8
+        dtrw1_heating = 20
 
-        w = -1992.88+734.415*qa-83.8188*qa**2+4.29282*qa**3-0.0805417*qa**4
+        # w = -1992.88+734.415*qa-83.8188*qa**2+4.29282*qa**3-0.0805417*qa**4
+        
+        # w = (-13224.5+4748.29*qa-612.369*(qa**2)+34.7311*(qa**3)-0.728535*(qa**4))/1.06
+        
+        w = 2159.35-710.505*qa+100.656*(qa**2)-5.75702*(qa**3)+0.120588*(qa**4)
 
         PLT_heating = w / dtrw1_heating
 
@@ -514,7 +576,7 @@ elif option == 'Option 2 : qw - Calculate delta T from given water flow':
 
         dtrw5_heating = troom_heating - (twin_heating + twout4_heating)/2
         pw5_heating = PLT_heating*(dtrw5_heating*eqw_ref/0.7)
-        dtw5_heating = pw5_heating / (qw_cooling *4200)
+        dtw5_heating = pw5_heating / (qw_heating *4200)
         twout5_heating = dtw5_heating + twin_heating
 
 
@@ -522,6 +584,8 @@ elif option == 'Option 2 : qw - Calculate delta T from given water flow':
         
         dtra_cooling = (troom_cooling + tgr_cooling - ta_cooling)
         dtra_heating = -(troom_heating + tgr_heating - ta_heating)
+        dtra_cooling = round(dtra_cooling,2)
+        dtra_heating = round(dtra_heating,2)
 
         dpw_cooling = dpw_cooling_formula(qw_cooling)
         dpw_heating = dpw_heating_formula(qw_heating)
@@ -537,9 +601,19 @@ elif option == 'Option 2 : qw - Calculate delta T from given water flow':
         pa_heating = round(pa_heating,2)
 
         ptot_cooling = pw5_cooling + pa_cooling
-        ptot_heating = pw5_heating + pa_heating
+        ptot_heating = -pw5_heating + pa_heating
     
         qa = str(qa)
+        troom_cooling = round(troom_cooling,2)
+        troom_heating = round(troom_heating,2)
+        tgr_cooling = round(tgr_cooling,2)
+        tgr_heating = round(tgr_heating,2)
+        dtra_cooling = round(dtra_cooling,2)
+        dtra_heating = round(dtra_heating,2)
+        qw_cooling = round(qw_cooling,2)
+        qw_heating = round(qw_heating,2)
+        twin_cooling = round(twin_cooling,2)
+        twin_heating = round(twin_heating,2)
         twout5_cooling = round(twout5_cooling,2)
         twout5_heating = round(twout5_heating,2)
         dtw5_cooling = round(dtw5_cooling,2)
@@ -547,6 +621,8 @@ elif option == 'Option 2 : qw - Calculate delta T from given water flow':
         dtrw5_cooling = round(dtrw5_cooling,2)
         dtrw5_heating = round(dtrw5_heating,2)
         pma = round(pma,2)
+        pa_cooling = round(pa_cooling,2)
+        pa_heating = round(pa_heating,2)
         pw5_cooling = round(pw5_cooling,2)
         pw5_heating = round(pw5_heating,2)
         pa_cooling = round(pa_cooling,2)
@@ -554,8 +630,6 @@ elif option == 'Option 2 : qw - Calculate delta T from given water flow':
         ptot_heating = round(ptot_heating,2)
         dpw_cooling = round(dpw_cooling,2)
         dpw_heating = round(dpw_heating,2)
-        dtra_cooling = round(dtra_cooling,2)
-        dtra_heating = round(dtra_heating,2)
         
 
         
@@ -581,10 +655,10 @@ elif option == 'Option 2 : qw - Calculate delta T from given water flow':
             ['Water flow rate', '(l/s)','qw',qw_cooling,'',qw_heating,''],
             ['Inlet water temperature', '(°C)','twi',twin_cooling,'',twin_heating,''],
             ['Outlet water temperature', '(°C) ','twout','',twout5_cooling,'',twout5_heating],
-            ['Water temperature difference in out', '(°C)','dtw','',dtw5_cooling,'',dtw5_heating],
-            ['Temp. diff. room air and min water temp.','(°C)','dtrw','',dtrw5_cooling,'',dtrw5_heating],
+            ['Water temperature difference in out', '(°C)','dtw','',dtw5_cooling,'',-dtw5_heating],
+            ['Temp. diff. room air and min water temp.','(°C)','dtrw','',dtrw5_cooling,'',-dtrw5_heating],
             ['Motive air pressure', '(Pa)', 'pma', '', pma, '', pma],
-            ['Water side capacity', '(W)','pw','',pw5_cooling,'',pw5_heating],
+            ['Water side capacity', '(W)','pw','',pw5_cooling,'',-pw5_heating],
             ['Air side capacity', '(W)', 'pa','',pa_cooling,'',pa_heating],
             ['Total capacity', '(W)','ptot', '', ptot_cooling,'',ptot_heating],
             ['Water pressure drop', '(kPa)','DPw','',dpw_cooling,'',dpw_heating]]
@@ -593,15 +667,19 @@ elif option == 'Option 2 : qw - Calculate delta T from given water flow':
         st.dataframe(df2,height=530)
         
     
-    st.write("pw1_heating : ",pw1_heating)
-    st.write("pw2_heating : ",pw2_heating)
-    st.write("pw3_heating : ",pw3_heating)
-    st.write("pw4_heating : ",pw4_heating)
-    st.write("pw5_heating : ",pw5_heating)
+    # st.write("pw1_heating : ",pw1_heating)
+    # st.write("pw2_heating : ",pw2_heating)
+    # st.write("pw3_heating : ",pw3_heating)
+    # st.write("pw4_heating : ",pw4_heating)
+    # st.write("pw5_heating : ",pw5_heating)
     
-    st.write("eqw_ref : ",eqw_ref)
-    st.write("dtrw cooling : ",dtrw5_cooling)
-    st.write("dtrw heating : ", dtrw5_heating)
+    # st.write("eqw_ref : ",eqw_ref)
+    # st.write("dtrw cooling : ",dtrw5_cooling)
+    # st.write("dtrw heating : ", dtrw5_heating)
+    
+    # st.write("plt : ",PLT_heating)
+    # st.write("w : ", w)
+    # st.write("dtrw1_heating : ",dtrw1_heating)
     
     
     d = {'ref' : 1,
