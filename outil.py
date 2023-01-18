@@ -306,8 +306,8 @@ if option == 'Option 1 : ∆tw - Calculate water flow from given delta T':
         pa_cooling = round(pa_cooling,2)
         pa_heating = round(pa_heating,2)
         
-        pa_heating = 1.2*qa*(troom_heating+tgr_heating+(dtrw_heating/2))
-        pa_heating = round(pa_heating,2)
+        # pa_heating = 1.2*qa*(troom_heating+tgr_heating+(dtrw_heating/2))
+        # pa_heating = round(pa_heating,2)
         
         ptot_cooling = round(pw5_cooling + pa_cooling,2)
         ptot_heating = round(pw5_heating + pa_heating,2)
