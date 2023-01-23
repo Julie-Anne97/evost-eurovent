@@ -455,7 +455,7 @@ if option == 'Option 1 : ∆tw - Calculate water flow from given delta T':
                      (highlight_col
                       ,axis=None
                       )
-                     .format(precision=2))
+                     .format(precision=2),height=530)
     
     
     # st.write('pwtest : ',w)
