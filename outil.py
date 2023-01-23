@@ -347,44 +347,11 @@ if option == 'Option 1 : ∆tw - Calculate water flow from given delta T':
     
         qa=round(qa,2)
         qa = str(qa)
-        # troom_cooling = round(troom_cooling,2)
-        # troom_heating =round(troom_heating,2)
-        # twin_cooling =round(twin_cooling,2)
-        # twin_heating =round(twin_heating,2)
-        # twout_cooling= round(twout_cooling,2)
-        # twout_heating  =round(twout_heating,2)
-        # tgr_cooling=round(tgr_cooling,2)
-        # tgr_heating =round(tgr_heating,2)
-        # dtra_cooling = round(dtra_cooling,2)
-        # dtra_heating = round(dtra_heating,2)
-        # dtw_cooling = round(dtw_cooling,2)
-        # dtw_heating = round(dtw_heating,2)
-        # qw5_cooling=round (qw5_cooling,4)
-        # qw5_heating = round(qw5_heating,4)
-        # dpw_cooling = round(dpw_cooling,2)
-        # dpw_heating = round(dpw_heating,2)
-        # pma = round(pma,2)
-        # pw5_cooling = round(pw5_cooling,2)
-        # pw5_heating =round(pw5_heating,2)
-        # qw5_cooling=round(qw5_cooling,2)
-        # qw5_heating=round(qw5_heating,4)
-        # pa_cooling=round(pa_cooling,2)
-        # pa_heating = round(pa_heating,2)
-        # ptot_cooling=round(ptot_cooling,2)
-        # ptot_heating=round(ptot_heating,2)
-        # dpw_cooling=round(dpw_cooling,2)
-        # dpw_heating=round(dpw_heating,2)
-        # dtrw_cooling = round(dtrw_cooling,2)
-        # dtrw_heating = round(dtrw_heating,2)
-
+      
         ## TABLEAU RECAPITULATIF
         
         st.subheader("Results")
-        # st.write("step 3 qw1 heating", qw1_heating)
-        # st.write("step 3 qw2 heating", qw2_heating)
-        # st.write("step 3 qw3 heating", qw3_heating)
-        # st.write("step 3 qw4 heating", qw4_heating)
-        # st.write("step 3 qw5 heating", qw5_heating)
+     
         
         if qw5_heating<0.025:
             st.error("Water flow rate in cooling circuit is below the minimum permitted qwmin = 0.025 l/s", icon="🚨")
@@ -418,44 +385,21 @@ if option == 'Option 1 : ∆tw - Calculate water flow from given delta T':
 
         df1 = pd.DataFrame(option1, columns =['   ',' ','', 'Cooling inputs','Cooling outputs','Heating inputs','Heating outputs'])
         
-        # def highlight(val):
-        #     blue = '#ACE5EE' 
-        #     red =  '#ffcccb'
-        #     return ['background-color: %s' % blue
-        #             if col.name]
-            # if val != "" else 'white'
-            # return f'background-color: {color}'
-        
-        def cooling_highlight(val):
-            color = '#FF8886' if val else 'white'
-            return f'background-color: {color}'
-        
         def highlight_col(x):
-            # if x == 0.0:
-            # blue 0= 'background-color: #ACE5EE '
-                blue = 'background-color: lightblue '
-                red = 'background-color: #ffcccb'
-                df1 = pd.DataFrame('', index=x.index, columns=x.columns)
-                df1.iloc[:, 3:5] = blue #if x else 'white'
-                df1.iloc[:, 5:7] = red #if x else 'white'
-                return df1  
-        
-        
-        
-        # st.dataframe(df1
-        #              .style.applymap(cooling_highlight, subset=['Cooling inputs', 'Cooling outputs']).format(precision=2)
-        #             #  ,(heating_highlight, subset=['Heating inputs', 'Heating outputs'])             
-        #              ,height=530
-        #              )
-        
-        st.dataframe(df1.style#.set_table_styles([{'selector':'th',
-                               #            'props':[('vertical-align','top')]}])
-                    #  .highlight_null
+            blue = 'background-color: lightblue '
+            red = 'background-color: #ffcccb'
+            df2 = pd.DataFrame('', index=x.index, columns=x.columns)
+            df2.iloc[:, 3:5] = blue
+            df2.iloc[:, 5:7] = red
+            return df2.where(df1.ne(''))
+            
+            
+        st.dataframe(df1.style
                      .apply
                      (highlight_col
                       ,axis=None
                       )
-                     .format(precision=2),height=530)
+                     .format(precision=2),width=950,height=530)
     
     
     # st.write('pwtest : ',w)
@@ -743,23 +687,18 @@ elif option == 'Option 2 : qw - Calculate delta T from given water flow':
             ['Total capacity', '(W)','ptot', '', ptot_cooling,'',ptot_heating],
             ['Water pressure drop', '(kPa)','DPw','',dpw_cooling,'',dpw_heating]]
         
-        df2 = pd.DataFrame(option2, columns =['   ',' ','', 'Cooling inputs','Cooling outputs','Heating inputs','Heating outputs'])
-        st.dataframe(df2,height=530)
+        df3 = pd.DataFrame(option2, columns =['   ',' ','', 'Cooling inputs','Cooling outputs','Heating inputs','Heating outputs'])
         
-    
-    # st.write("pw1_heating : ",pw1_heating)
-    # st.write("pw2_heating : ",pw2_heating)
-    # st.write("pw3_heating : ",pw3_heating)
-    # st.write("pw4_heating : ",pw4_heating)
-    # st.write("pw5_heating : ",pw5_heating)
-    
-    # st.write("eqw_ref : ",eqw_ref)
-    # st.write("dtrw cooling : ",dtrw5_cooling)
-    # st.write("dtrw heating : ", dtrw5_heating)
-    
-    # st.write("plt : ",PLT_heating)
-    # st.write("w : ", w)
-    # st.write("dtrw1_heating : ",dtrw1_heating)
+        def highlight_col(x):
+            blue = 'background-color: lightblue '
+            red = 'background-color: #ffcccb'
+            df4 = pd.DataFrame('', index=x.index, columns=x.columns)
+            df4.iloc[:, 3:5] = blue
+            df4.iloc[:, 5:7] = red
+            return df4.where(df3.ne(''))
+        
+        st.dataframe(df3.style.apply(highlight_col,axis=None).format(precision=2),height=530,width=950)
+        
     
     
     d = {'ref' : 1,
@@ -802,4 +741,3 @@ elif option == 'Option 2 : qw - Calculate delta T from given water flow':
         st.markdown("Please submit to save")
     
     st.write(results_option2)
-    
