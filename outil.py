@@ -116,7 +116,10 @@ def epsilon_cooling(x):
 #     return eqw
 
 def epsilon_heating(x):
-    eqw = (0.588878-17.955*x+3140.21*(x**2)-125288*(x**3)+2.43832*(10**6)*(x**4)-2.57437*(10**7)*(x**5)+1.416*(10**8)*(x**6)-3.18428*(10**8)*(x**7))*0.66
+    if x<0.134:
+        eqw = (0.588878-17.955*x+3140.21*(x**2)-125288*(x**3)+2.43832*(10**6)*(x**4)-2.57437*(10**7)*(x**5)+1.416*(10**8)*(x**6)-3.18428*(10**8)*(x**7))*0.66
+    else :
+        x = (0.588878-17.955*0.133+3140.21*(0.133**2)-125288*(0.133**3)+2.43832*(10**6)*(0.133**4)-2.57437*(10**7)*(0.133**5)+1.416*(10**8)*(0.133**6)-3.18428*(10**8)*(0.133**7))*0.66
     return eqw
         
 # def epsilon_heating(x):
@@ -140,26 +143,26 @@ if option == 'Option 1 : ∆tw - Calculate water flow from given delta T':
     ### STEP 1: choose one airflow from the table, then define the water temperatures (= enter qa & twin)
     with col1:
         st.subheader('Select inputs')
-        measure = st.radio("Unité de mesure",("l/s","m³/h"))
+        qa = st.number_input('Primary (Motive) air flow rate - qa (l/s)',value=16.0,min_value=7.8)
+
+        # measure = st.radio("Unité de mesure",("l/s","m³/h"))
         st.markdown('**Cooling inputs**')
-        if tubes == 4 :
-            troom_cooling = st.number_input('Reference Air Temperature - troom (°C)',value=26.0,step=0.1)
-            tgr_cooling = st.number_input('Room Temperature Gradient -tgr °C/m)', value=0.0,step=0.1)
-            ta_cooling = st.number_input('Primary (Motive) Air Temperature - ta (°C)',value=10.0,step=0.1)
-            twin_cooling = st.number_input('Inlet Water Temperature - twin (°C)',value=15.0,min_value=13.0,step=0.1)
-            twout_cooling = st.number_input('Outlet Water Temperature - twout (°C)',value=18.0,step=0.1)
-        elif tubes == 2 :
-            if Choose == 'Heating':
-                troom_cooling = st.number_input('Reference Air Temperature - troom (°C)',value=26.0,step=0.1,disabled=True)
-                tgr_cooling = st.number_input('Room Temperature Gradient -tgr °C/m)', value=0.0,step=0.1,disabled=True)
-                ta_cooling = st.number_input('Primary (Motive) Air Temperature - ta (°C)',value=10.0,step=0.1,disabled=True)
-                twin_cooling = st.number_input('Inlet Water Temperature - twin (°C)',value=15.0,min_value=13.0,step=0.1,disabled=True)
-                twout_cooling = st.number_input('Outlet Water Temperature - twout (°C)',value=18.0,step=0.1,disabled=True)   
+        troom_cooling = st.number_input('Reference Air Temperature - troom (°C)',value=26.0,step=0.1)
+        tgr_cooling = st.number_input('Room Temperature Gradient -tgr °C/m)', value=0.0,step=0.1)
+        ta_cooling = st.number_input('Primary (Motive) Air Temperature - ta (°C)',value=10.0,step=0.1)
+        twin_cooling = st.number_input('Inlet Water Temperature - twin (°C)',value=15.0,min_value=13.0,step=0.1)
+        twout_cooling = st.number_input('Outlet Water Temperature - twout (°C)',value=18.0,step=0.1)
+                # troom_cooling = st.number_input('Reference Air Temperature - troom (°C)',value=26.0,step=0.1,disabled=True)
+                # tgr_cooling = st.number_input('Room Temperature Gradient -tgr °C/m)', value=0.0,step=0.1,disabled=True)
+                # ta_cooling = st.number_input('Primary (Motive) Air Temperature - ta (°C)',value=10.0,step=0.1,disabled=True)
+                # twin_cooling = st.number_input('Inlet Water Temperature - twin (°C)',value=15.0,min_value=13.0,step=0.1,disabled=True)
+                # twout_cooling = st.number_input('Outlet Water Temperature - twout (°C)',value=18.0,step=0.1,disabled=True)   
             
     with col2:
         st.title("")
+        st.title("")
+        st.title("")
         st.markdown("")
-        qa = st.number_input('Primary (Motive) air flow rate - qa (l/s)',value=16.0,min_value=7.8)
         st.markdown('**Heating inputs**')
         troom_heating = st.number_input('Reference Air Temperature - troom (°C)  ',value=26.0,step=0.1,)
         tgr_heating = st.number_input('Room Temperature Gradient-tgr (°C/m)', value=0.0, step=0.1)
@@ -180,9 +183,9 @@ if option == 'Option 1 : ∆tw - Calculate water flow from given delta T':
         dtrw_cooling = (troom_cooling + tgr_cooling) - ((twin_cooling+twout_cooling)/2)
         
         dtw_cooling = round(dtw_cooling,2)
-        st.write("step 2 dtw_cooling : ",dtw_cooling)
+        # st.write("step 2 dtw_cooling : ",dtw_cooling)
         dtrw_cooling = round(dtrw_cooling,2)
-        st.write("step 2 dtrw_cooling : ", dtrw_cooling)
+        # st.write("step 2 dtrw_cooling : ", dtrw_cooling)
         
         ### STEP 3: read the data from the table correspondent to the airflow selected and calculate the specific power PLT (W/K)
         
@@ -194,20 +197,20 @@ if option == 'Option 1 : ∆tw - Calculate water flow from given delta T':
         PLT_cooling = w / v
         
         w = round(w,2)
-        st.write("step 3 w : ",w)
+        # st.write("step 3 w : ",w)
         v = round(v,2)
-        st.write("step 3 v : ",v)
+        # st.write("step 3 v : ",v)
         PLT_cooling = round(PLT_cooling,2)
-        st.write("step 3 plt_cooling : ",PLT_cooling)
+        # st.write("step 3 plt_cooling : ",PLT_cooling)
         ###STEP 4: calculate the power (W) correspondent to correction factor equal to 1, using the Dtrw calculated
         
         #Pw1 = (PLTtest * dtrw)/Eqw0.08ls
         eqw_ref = 1.06
         pw1_cooling = (PLT_cooling*dtrw_cooling)/eqw_ref
         
-        st.write("step 4 eqw_ref ",eqw_ref)
+        # st.write("step 4 eqw_ref ",eqw_ref)
         pw1_cooling = round(pw1_cooling,2)
-        st.write("step 4 pw1 cooling : ",pw1_cooling)
+        # st.write("step 4 pw1 cooling : ",pw1_cooling)
     
         ###STEP 5: calculate the correspondet water flow, using the Dtw calculated
         
@@ -245,8 +248,8 @@ if option == 'Option 1 : ∆tw - Calculate water flow from given delta T':
         
         dtw_heating = round(dtw_heating,2)
         dtrw_heating = round(dtrw_heating,2)
-        st.write("step 2 dt_heating : ",dtw_heating)
-        st.write("step 2 dtrw_heating",dtrw_heating)
+        # st.write("step 2 dt_heating : ",dtw_heating)
+        # st.write("step 2 dtrw_heating",dtrw_heating)
     
         ### STEP 3: read the data from the table correspondent to the airflow selected and calculate the specific power PLT (W/K)
         
@@ -264,8 +267,8 @@ if option == 'Option 1 : ∆tw - Calculate water flow from given delta T':
         
         w = round(w,2)
         PLT_heating = round(PLT_heating,2)
-        st.write("step 3 w heating", w)
-        st.write("step 3 plt heating",PLT_heating)
+        # st.write("step 3 w heating", w)
+        # st.write("step 3 plt heating",PLT_heating)
         
     
         ### STEP 4: calculate the power (W) correspondent to correction factor equal to 1, using the Dtrw calculated
@@ -278,41 +281,41 @@ if option == 'Option 1 : ∆tw - Calculate water flow from given delta T':
         
         pw1_heating = PLT_heating*(dtrw_heating/eqw_ref)
         pw1_heating = round(pw1_heating,2)
-        st.write("step 3 pw1_heating",pw1_heating)
+        # st.write("step 3 pw1_heating",pw1_heating)
         qw1_heating = pw1_heating / (dtw_heating*4200)
         qw1_heating = round(qw1_heating,4)
-        st.write("step 3 qw1 heating", qw1_heating)
+        # st.write("step 3 qw1 heating", qw1_heating)
         
         pw2_heating = pw1_heating*epsilon_heating(qw1_heating)
-        st.write("epsilon pw2 heating", epsilon_heating(qw1_heating))
+        # st.write("epsilon pw2 heating", epsilon_heating(qw1_heating))
         pw2_heating = round(pw2_heating,2)
-        st.write("step 3 pw2 heating",pw2_heating)
+        # st.write("step 3 pw2 heating",pw2_heating)
         qw2_heating = pw2_heating / (dtw_heating*4200)
         qw2_heating = round(qw2_heating,4)
-        st.write("step qw2 heating",qw2_heating)
+        # st.write("step qw2 heating",qw2_heating)
         
         pw3_heating = pw1_heating*epsilon_heating(qw2_heating)
         pw3_heating = round(pw3_heating)
-        st.write("step 3 pw3 heating",pw3_heating)
+        # st.write("step 3 pw3 heating",pw3_heating)
         qw3_heating = pw3_heating / (dtw_heating*4200)
         qw3_heating  = round(qw3_heating,4)
-        st.write("step 3 qw3 heating", qw3_heating)
+        # st.write("step 3 qw3 heating", qw3_heating)
 
 
         pw4_heating = pw1_heating*epsilon_heating(qw3_heating)
         pw4_heating = round(pw4_heating,2)
-        st.write("step 3 pw4 heating",pw4_heating)
+        # st.write("step 3 pw4 heating",pw4_heating)
         qw4_heating = pw4_heating / (dtw_heating*4200)
         qw4_heating = round(qw4_heating,4)
-        st.write("qw4 heating", qw4_heating)
+        # st.write("qw4 heating", qw4_heating)
         
         pw5_heating = pw1_heating*epsilon_heating(qw4_heating)
-        st.write("epsilon pw5 heating", epsilon_heating(qw4_heating))
+        # st.write("epsilon pw5 heating", epsilon_heating(qw4_heating))
         pw5_heating = round(pw5_heating,2)
-        st.write("pw5 heating", pw5_heating)
+        # st.write("pw5 heating", pw5_heating)
         qw5_heating = pw5_heating / (dtw_heating*4200)
         qw5_heating = round(qw5_heating,4)
-        st.write("qw5 heating", qw5_heating)
+        # st.write("qw5 heating", qw5_heating)
         
         
         
@@ -402,8 +405,8 @@ if option == 'Option 1 : ∆tw - Calculate water flow from given delta T':
     
     qa = float(qa)
     ##
-    st.write('pwtest : ',w)
-    st.write('plttest : ',PLT_cooling)
+    # st.write('pwtest : ',w)
+    # st.write('plttest : ',PLT_cooling)
     
     # submit button
     st.subheader("Add new values to table")
