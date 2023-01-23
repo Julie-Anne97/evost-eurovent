@@ -6,13 +6,14 @@ import shutil
 from PIL import Image
 from decimal import Decimal, localcontext
 
+
+# CONFIGURATIONS
+
 pd.set_option('display.max_columns', None)
 logo = Image.open("EVOST logo.png")
 machine = Image.open('Image115.png')
 st.set_page_config(page_title="EVOST EUROVENT",page_icon=machine,layout="wide")
 
-
-# CONFIGURATIONS
 
 # STREAMLIT_STATIC_PATH = Path(st.__path__[0]) / 'static'
 # CSS_PATH = (STREAMLIT_STATIC_PATH / "assets/css")
@@ -78,6 +79,9 @@ styles = [
   dict(selector="td", props=td_props)
   ]
 
+# def cooling_colors(c):
+#     return []
+
 
 
 # SIDEBAR
@@ -88,11 +92,11 @@ with st.sidebar:
     st.markdown("**EVOST E1 – 1250 – 4p – L - H**")
     # st.radio("Nozzle : ", ("E1","E1.1"), disabled=True)
     # st.radio("Model", (800, 1150, 1250, 1400, 2600), disabled=True,index=2)
-    tubes = st.radio("Tubes",(2,4),index=1)
-    if tubes == 2:
-        choose = st.radio("",("Cooling","Heating"))
-    elif tubes == 4:
-        choose = st.radio("",("Cooling","Heating"),disabled=True)
+    tubes = st.radio("Tubes",(2,4),index=1,disabled=True)
+    # if tubes == 2:
+    #     choose = st.radio("",("Cooling","Heating"))
+    # elif tubes == 4:
+    #     choose = st.radio("",("Cooling","Heating"),disabled=True)
     st.radio("Type : ", ("Horizontal","Vertical"), disabled=True)
     # st.write("Motive pressure – pmot = 350 Pa")
     option = st.radio(
@@ -155,10 +159,7 @@ if option == 'Option 1 : ∆tw - Calculate water flow from given delta T':
     with col2:
         st.title("")
         st.markdown("")
-        if measure == 'l/s' :
-            qa = st.number_input('Primary (Motive) air flow rate - qa (l/s)',value=16.0,min_value=7.8)
-        elif measure == "m³/h":
-            qa = st.number_input('Primary (Motive) air flow rate - qa (m³/h)',value=16.0,min_value=6.2)
+        qa = st.number_input('Primary (Motive) air flow rate - qa (l/s)',value=16.0,min_value=7.8)
         st.markdown('**Heating inputs**')
         troom_heating = st.number_input('Reference Air Temperature - troom (°C)  ',value=26.0,step=0.1,)
         tgr_heating = st.number_input('Room Temperature Gradient-tgr (°C/m)', value=0.0, step=0.1)
@@ -213,16 +214,16 @@ if option == 'Option 1 : ∆tw - Calculate water flow from given delta T':
         pw1_cooling = (PLT_cooling*dtrw_cooling)/eqw_ref
         qw1_cooling = pw1_cooling / (dtw_cooling*4200)
         
-        pw2_cooling = pw1_cooling*epsilon_cooling(qw1_cooling)
+        pw2_cooling = pw1_cooling*round(epsilon_cooling(qw1_cooling),8)
         qw2_cooling = pw2_cooling / (dtw_cooling*4200)
         
-        pw3_cooling = pw1_cooling*epsilon_cooling(qw2_cooling)
+        pw3_cooling = pw1_cooling*round(epsilon_cooling(qw2_cooling),8)
         qw3_cooling = pw3_cooling / (dtw_cooling*4200)
         
-        pw4_cooling = pw1_cooling*epsilon_cooling(qw3_cooling)
+        pw4_cooling = pw1_cooling*round(epsilon_cooling(qw3_cooling),8)
         qw4_cooling = pw4_cooling / (dtw_cooling*4200)
         
-        pw5_cooling = pw1_cooling*epsilon_cooling(qw4_cooling)
+        pw5_cooling = pw1_cooling*round(epsilon_cooling(qw4_cooling),8)
         qw5_cooling = pw5_cooling / (dtw_cooling*4200)
         
         qw1_cooling = round(qw1_cooling,4)
@@ -255,7 +256,11 @@ if option == 'Option 1 : ∆tw - Calculate water flow from given delta T':
         # PLT_heating = w / v 
         
         w = 2159.35-710.505*qa+100.656*(qa**2)-5.75702*(qa**3)+0.120588*(qa**4)
-        PLT_heating = w / dtrw_heating
+        
+        # PLT_heating = w / dtrw_heating
+        
+        PLT_heating = w / 20
+
         
         w = round(w,2)
         PLT_heating = round(PLT_heating,2)
