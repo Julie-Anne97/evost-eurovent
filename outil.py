@@ -49,7 +49,7 @@ st.markdown("""
                     padding-top: 3.5rem;
                     padding-right: 1rem;
                     padding-bottom: 3.5rem;
-                    padding-left: 1rem;
+                    padding-left: 0.5rem;
                 }
                 div[class*="stNumberInput"] label {font-size: 12px;}
                 input {font-size: 0.66rem !important;}
@@ -672,20 +672,20 @@ elif option == 'Option 2 : qw - Calculate delta T from given water flow':
             st.error("Water flow rate in heating circuit is above the minimum permitted qwmin = 1.0 l/s",icon="🚨")
         
         option2 = [
-            ['Primary (Motive) air flow rate', '(l/s)','qa',qa,'',qa,''],
-            ['Reference air temperature', '(°C)','troom', troom_cooling,'',troom_heating,''],
-            ['Room temperature gradient','','tgr',tgr_cooling,'',tgr_heating,''],
-            ['Primary (Motive) air temperature', '(°C)','dtra',dtra_cooling,'',dtra_heating,''],
-            ['Water flow rate', '(l/s)','qw',qw_cooling,'',qw_heating,''],
-            ['Inlet water temperature', '(°C)','twi',twin_cooling,'',twin_heating,''],
-            ['Outlet water temperature', '(°C) ','twout','',twout5_cooling,'',twout5_heating],
-            ['Water temperature difference in out', '(°C)','dtw','',dtw5_cooling,'',-dtw5_heating],
-            ['Temp. diff. room air and min water temp.','(°C)','dtrw','',dtrw5_cooling,'',-dtrw5_heating],
-            ['Motive air pressure', '(Pa)', 'pma', '', pma, '', pma],
-            ['Water side capacity', '(W)','pw','',pw5_cooling,'',-pw5_heating],
-            ['Air side capacity', '(W)', 'pa','',pa_cooling,'',pa_heating],
-            ['Total capacity', '(W)','ptot', '', ptot_cooling,'',ptot_heating],
-            ['Water pressure drop', '(kPa)','DPw','',dpw_cooling,'',dpw_heating]]
+            ['Primary (Motive) air flow rate','qa',qa,'',qa,'', '(l/s)'],
+            ['Reference air temperature','troom', troom_cooling,'',troom_heating,'', '(°C)'],
+            ['Room temperature gradient','tgr',tgr_cooling,'',tgr_heating,'',''],
+            ['Primary (Motive) air temperature','dtra',dtra_cooling,'',dtra_heating,'', '(°C)'],
+            ['Water flow rate','qw',qw_cooling,'',qw_heating,'', '(l/s)'],
+            ['Inlet water temperature','twi',twin_cooling,'',twin_heating,'', '(°C)'],
+            ['Outlet water temperature','twout','',twout5_cooling,'',twout5_heating, '(°C) '],
+            ['Water temperature difference in out','dtw','',dtw5_cooling,'',-dtw5_heating, '(°C)'],
+            ['Temp. diff. room air and min water temp.','dtrw','',dtrw5_cooling,'',-dtrw5_heating,'(°C)'],
+            ['Motive air pressure', 'pma', '', pma, '', pma, '(Pa)'],
+            ['Water side capacity','pw','',pw5_cooling,'',-pw5_heating, '(W)'],
+            ['Air side capacity', 'pa','',pa_cooling,'',pa_heating, '(W)'],
+            ['Total capacity','ptot', '', ptot_cooling,'',ptot_heating, '(W)'],
+            ['Water pressure drop','DPw','',dpw_cooling,'',dpw_heating, '(kPa)']]
         
         df3 = pd.DataFrame(option2, columns =['   ',' ','', 'Cooling inputs','Cooling outputs','Heating inputs','Heating outputs'])
         
@@ -697,7 +697,7 @@ elif option == 'Option 2 : qw - Calculate delta T from given water flow':
             df4.iloc[:, 5:7] = red
             return df4.where(df3.ne(''))
         
-        st.dataframe(df3.style.apply(highlight_col,axis=None).format(precision=2),height=530,width=950)
+        st.dataframe(df3.style.apply(highlight_col,axis=None).format(precision=2),height=530,width=1050)
         
     
     
