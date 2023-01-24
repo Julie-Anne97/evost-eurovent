@@ -383,7 +383,7 @@ if option == 'Option 1 : ∆tw - Calculate water flow from given delta T':
             ['Water pressure drop','DPw','',dpw_cooling,'',dpw_heating, '(kPa)']
             ]
 
-        df1 = pd.DataFrame(option1, columns =['   ',' ' 'Cooling inputs','Cooling outputs','Heating inputs','Heating outputs','',])
+        df1 = pd.DataFrame(option1, columns =['   ',' ', 'Cooling inputs','Cooling outputs','Heating inputs','Heating outputs','',])
         
         def highlight_col(x):
             blue = 'background-color: lightblue '
