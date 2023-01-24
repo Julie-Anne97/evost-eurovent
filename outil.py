@@ -367,30 +367,30 @@ if option == 'Option 1 : ∆tw - Calculate water flow from given delta T':
         
 
         option1 = [
-            ['Primary (Motive) air flow rate' ,'(l/s)','qa',qa,'',qa,''],
-            ['Reference air temperature', '(°C)','troom', round(troom_cooling,2),'',troom_heating,''],
-            ['Room temperature gradient','','tgr',tgr_cooling,'',tgr_heating,''],
-            ['Primary (Motive) air temperature', '(°C)','dtra',dtra_cooling,"",dtra_heating,""],
-            ['Inlet water temperature','(°C)','twi',twin_cooling,'',twin_heating,''],
-            ['Outlet water temperature','(°C) ','twout',twout_cooling,'',twout_heating,''],
-            ['Water temperature difference in out', '(°C)','dtw','',dtw_cooling,'',dtw_heating],
-            ['Temp. diff. room air and mean water temp ','(K)','dtrw','',dtrw_cooling,'',dtrw_heating],
-            ['Water flow rate','(l/s)','qw','',qw5_cooling,'',qw5_heating],
-            ['Motive air pressure' ,'(Pa)', 'pma', '', pma, '', pma],
-            ['Water side capacity','(W)','pw','',pw5_cooling,'',pw5_heating],
-            ['Air side capacity', '(W)', 'pa','',pa_cooling,'',pa_heating],
-            ['Total capacity', '(W)','ptot', '', ptot_cooling,'',ptot_heating],
-            ['Water pressure drop', '(kPa)','DPw','',dpw_cooling,'',dpw_heating]
+            ['Primary (Motive) air flow rate' ,'qa',qa,'',qa,'','(l/s)'],
+            ['Reference air temperature','troom', round(troom_cooling,2),'',troom_heating,'', '(°C)'],
+            ['Room temperature gradient','tgr',tgr_cooling,'',tgr_heating,'',''],
+            ['Primary (Motive) air temperature','dtra',dtra_cooling,"",dtra_heating,"", '(°C)'],
+            ['Inlet water temperature','twi',twin_cooling,'',twin_heating,'','(°C)'],
+            ['Outlet water temperature','twout',twout_cooling,'',twout_heating,'','(°C) '],
+            ['Water temperature difference in out','dtw','',dtw_cooling,'',dtw_heating, '(°C)'],
+            ['Temp. diff. room air and mean water temp ','dtrw','',dtrw_cooling,'',dtrw_heating,'(K)'],
+            ['Water flow rate','qw','',qw5_cooling,'',qw5_heating,'(l/s)'],
+            ['Motive air pressure' , 'pma', '', pma, '', pma,'(Pa)'],
+            ['Water side capacity','pw','',pw5_cooling,'',pw5_heating,'(W)'],
+            ['Air side capacity', 'pa','',pa_cooling,'',pa_heating, '(W)'],
+            ['Total capacity','ptot', '', ptot_cooling,'',ptot_heating, '(W)'],
+            ['Water pressure drop','DPw','',dpw_cooling,'',dpw_heating, '(kPa)']
             ]
 
-        df1 = pd.DataFrame(option1, columns =['   ',' ','', 'Cooling inputs','Cooling outputs','Heating inputs','Heating outputs'])
+        df1 = pd.DataFrame(option1, columns =['   ',' ' 'Cooling inputs','Cooling outputs','Heating inputs','Heating outputs','',])
         
         def highlight_col(x):
             blue = 'background-color: lightblue '
             red = 'background-color: #ffcccb'
             df2 = pd.DataFrame('', index=x.index, columns=x.columns)
-            df2.iloc[:, 3:5] = blue
-            df2.iloc[:, 5:7] = red
+            df2.iloc[:, 2:4] = blue
+            df2.iloc[:, 4:6] = red
             return df2.where(df1.ne(''))
             
             
@@ -628,34 +628,6 @@ elif option == 'Option 2 : qw - Calculate delta T from given water flow':
         ptot_heating = -pw5_heating + pa_heating
     
         qa = str(qa)
-        troom_cooling = round(troom_cooling,2)
-        troom_heating = round(troom_heating,2)
-        tgr_cooling = round(tgr_cooling,2)
-        tgr_heating = round(tgr_heating,2)
-        dtra_cooling = round(dtra_cooling,2)
-        dtra_heating = round(dtra_heating,2)
-        qw_cooling = round(qw_cooling,2)
-        qw_heating = round(qw_heating,2)
-        twin_cooling = round(twin_cooling,2)
-        twin_heating = round(twin_heating,2)
-        twout5_cooling = round(twout5_cooling,2)
-        twout5_heating = round(twout5_heating,2)
-        dtw5_cooling = round(dtw5_cooling,2)
-        dtw5_heating = round(dtw5_heating,2)
-        dtrw5_cooling = round(dtrw5_cooling,2)
-        dtrw5_heating = round(dtrw5_heating,2)
-        pma = round(pma,2)
-        pa_cooling = round(pa_cooling,2)
-        pa_heating = round(pa_heating,2)
-        pw5_cooling = round(pw5_cooling,2)
-        pw5_heating = round(pw5_heating,2)
-        pa_cooling = round(pa_cooling,2)
-        ptot_cooling = round(ptot_cooling,2)
-        ptot_heating = round(ptot_heating,2)
-        dpw_cooling = round(dpw_cooling,2)
-        dpw_heating = round(dpw_heating,2)
-        
-
         
         st.subheader("Results")
         
@@ -687,14 +659,14 @@ elif option == 'Option 2 : qw - Calculate delta T from given water flow':
             ['Total capacity','ptot', '', ptot_cooling,'',ptot_heating, '(W)'],
             ['Water pressure drop','DPw','',dpw_cooling,'',dpw_heating, '(kPa)']]
         
-        df3 = pd.DataFrame(option2, columns =['   ',' ','', 'Cooling inputs','Cooling outputs','Heating inputs','Heating outputs'])
+        df3 = pd.DataFrame(option2, columns =['   ',' ', 'Cooling inputs','Cooling outputs','Heating inputs','Heating outputs','     '])
         
         def highlight_col(x):
             blue = 'background-color: lightblue '
             red = 'background-color: #ffcccb'
             df4 = pd.DataFrame('', index=x.index, columns=x.columns)
-            df4.iloc[:, 3:5] = blue
-            df4.iloc[:, 5:7] = red
+            df4.iloc[:, 2:4] = blue
+            df4.iloc[:, 4:6] = red
             return df4.where(df3.ne(''))
         
         st.dataframe(df3.style.apply(highlight_col,axis=None).format(precision=2),height=530,width=1050)
