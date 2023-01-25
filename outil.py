@@ -405,78 +405,78 @@ if option == 'Option 1 : ∆tw - Calculate water flow from given delta T':
     # st.write('pwtest : ',w)
     # st.write('plttest : ',PLT_cooling)
     
-    # submit button
-    st.subheader("Add new values to table")
+    # # submit button
+    # st.subheader("Add new values to table")
     
-    results_option1 = pd.read_csv('results_option1.csv')
+    # results_option1 = pd.read_csv('results_option1.csv')
     # results_option1
     
     
-    results_option1["ref"][-1] = results_option1.max()+1
+    # results_option1["ref"][-1] = results_option1.max()+1
     
-    add_ref = results_option1["ref"].max()+1
+    # add_ref = results_option1["ref"].max()+1
     
-    add_ref = int(add_ref)
+    # add_ref = int(add_ref)
     
-    clickSubmit = st.button('Save the calculation in summmary table')
+    # clickSubmit = st.button('Save the calculation in summmary table')
     
    
-    newdata = {'ref' : add_ref,
-             'Primary (Motive) Air Flow Rate': qa,
-             'Reference air temperature cooling' : troom_cooling,
-             'Reference air temperature heating' : troom_heating,
-             'Gradient cooling' : tgr_cooling,
-             'Gradient heating' : tgr_heating,
-             'Primary (Motive) Air Temperature Cooling' : dtra_cooling,
-             'Primary (Motive) Air Temperature Heating' : dtra_heating,
-             'Primary (Motive) Air Temperature cooling' : ta_cooling,
-             'Primary (Motive) Air Temperature Heating' : ta_heating,
-             'Inlet water temperature cooling' : twin_cooling,
-             'Inlet water temperature heating' : twin_heating,
-             'Outlet Water Temperature cooling': twout_cooling,
-             'Outlet Water Temperature heating' : twout_heating,
-             'Water temperature difference in out cooling' : dtw_cooling,
-             'Water temperature difference in out heating' : dtw_heating,
-             'Temp. diff. room air and mean water temp cooling' : dtrw_cooling,
-             'Temp. diff. room air and mean water temp cooling' : dtrw_heating,
-             'Water flow rate cooling' : qw5_cooling,
-             'Water flow rate heating' : qw5_heating,
-             'Motive air side pressure' : pma, 
-             'Water side capacity cooling': pw5_cooling,
-             'Water side capacity heating' : pw5_heating,
-             'Air side capacity cooling': pa_cooling,
-             'Air side capacity heating' : pa_heating,
-             'Total capacity cooling' : ptot_cooling,
-             'Total capacity heating' : ptot_heating,
-             'Water pressure drop cooling' : dpw_cooling,
-             'Water pressure drop heating' : dpw_heating
-              }
+    # newdata = {'ref' : add_ref,
+    #          'Primary (Motive) Air Flow Rate': qa,
+    #          'Reference air temperature cooling' : troom_cooling,
+    #          'Reference air temperature heating' : troom_heating,
+    #          'Gradient cooling' : tgr_cooling,
+    #          'Gradient heating' : tgr_heating,
+    #          'Primary (Motive) Air Temperature Cooling' : dtra_cooling,
+    #          'Primary (Motive) Air Temperature Heating' : dtra_heating,
+    #          'Primary (Motive) Air Temperature cooling' : ta_cooling,
+    #          'Primary (Motive) Air Temperature Heating' : ta_heating,
+    #          'Inlet water temperature cooling' : twin_cooling,
+    #          'Inlet water temperature heating' : twin_heating,
+    #          'Outlet Water Temperature cooling': twout_cooling,
+    #          'Outlet Water Temperature heating' : twout_heating,
+    #          'Water temperature difference in out cooling' : dtw_cooling,
+    #          'Water temperature difference in out heating' : dtw_heating,
+    #          'Temp. diff. room air and mean water temp cooling' : dtrw_cooling,
+    #          'Temp. diff. room air and mean water temp cooling' : dtrw_heating,
+    #          'Water flow rate cooling' : qw5_cooling,
+    #          'Water flow rate heating' : qw5_heating,
+    #          'Motive air side pressure' : pma, 
+    #          'Water side capacity cooling': pw5_cooling,
+    #          'Water side capacity heating' : pw5_heating,
+    #          'Air side capacity cooling': pa_cooling,
+    #          'Air side capacity heating' : pa_heating,
+    #          'Total capacity cooling' : ptot_cooling,
+    #          'Total capacity heating' : ptot_heating,
+    #          'Water pressure drop cooling' : dpw_cooling,
+    #          'Water pressure drop heating' : dpw_heating
+    #           }
          
-    d = pd.DataFrame([newdata])
-    # d
-    # d.to_csv('C:\\Users\\jarosquin\\Documents\\evost\\results_option1.csv',index=False)
+    # d = pd.DataFrame([newdata])
+    # # d
+    # # d.to_csv('C:\\Users\\jarosquin\\Documents\\evost\\results_option1.csv',index=False)
          
-    results_option1 = results_option1.append(d,ignore_index=True)
-    results_option1.to_csv('results_option1.csv',index=True)
+    # results_option1 = results_option1.append(d,ignore_index=True)
+    # results_option1.to_csv('results_option1.csv',index=True)
          #results_option1 = pd.concat([results_option1,d])
          #open('results_option1.csv','a').write(results_option1.to_csv())
     # else :
     #     st.markdown("Please submit to save")
     
-    st.dataframe(results_option1)
+    # st.dataframe(results_option1)
     
-    @st.cache
-    def convert_df(results_option1):
-    # IMPORTANT: Cache the conversion to prevent computation on every rerun
-        return results_option1.to_csv().encode('utf-8')
+    # @st.cache
+    # def convert_df(results_option1):
+    # # IMPORTANT: Cache the conversion to prevent computation on every rerun
+    #     return results_option1.to_csv().encode('utf-8')
 
-    csv = convert_df(results_option1)
+    # csv = convert_df(results_option1)
     
-    st.download_button(
-    label="Download data as CSV",
-    data=csv,
-    file_name='results_evost_option1.csv',
-    mime='text/csv')
+    # st.download_button(
+    # label="Download data as CSV",
+    # data=csv,
+    # file_name='results_evost_option1.csv',
+    # mime='text/csv')
 
 
     
@@ -673,43 +673,43 @@ elif option == 'Option 2 : qw - Calculate delta T from given water flow':
         
     
     
-    d = {'ref' : 1,
-        'Water flow' : qw_cooling,
-              'Primary Air Flow Rate': qa, 
-              'Primary Air Temperature': dtra_cooling,
-              'Reference Air Remperature': troom_cooling,
-              'Room Temperature Gradient': tgrvalue_cooling,
-              "Specific power" : PLTtest}
+    # d = {'ref' : 1,
+    #     'Water flow' : qw_cooling,
+    #           'Primary Air Flow Rate': qa, 
+    #           'Primary Air Temperature': dtra_cooling,
+    #           'Reference Air Remperature': troom_cooling,
+    #           'Room Temperature Gradient': tgrvalue_cooling,
+    #           "Specific power" : PLTtest}
     
     
-    d = pd.DataFrame([d],index=[0])
-    d
-    d.to_csv('results_option2.csv')
+    # d = pd.DataFrame([d],index=[0])
+    # d
+    # d.to_csv('results_option2.csv')
     
-    results_option2 = pd.read_csv('results_option2.csv')
-    results_option2
+    # results_option2 = pd.read_csv('results_option2.csv')
+    # results_option2
     
-    add_ref = int(results_option2["ref"].max()+1)
+    # add_ref = int(results_option2["ref"].max()+1)
     
-    clickSubmit = st.button('Save the calculation in summary table')
+    # clickSubmit = st.button('Save the calculation in summary table')
     
-    if clickSubmit == True: 
-         newdata = {'ref' : add_ref,
-              'Primary Air Flow Rate': qa, 
-              'Primary Air Temperature': dtra_cooling,
-              'Reference Air Remperature': troom_cooling,
-              'Room Temperature Gradient': tgr_cooling,
-              'Inlet Water Temperature': twin_cooling,
-              "dtw" : dtw_cooling,
-              "water flow rate" : qw3,
-              "water side capacity" : pw3,
-              "air side pressure" : pma}
-         st.write(newdata)
-         results_option2 = results_option2.append(newdata,ignore_index=True)
-         results_option2.to_csv('results_option2.csv',index=False)
-         #results_option1 = pd.concat([results_option1,d])
-         #open('results_option1.csv','a').write(results_option1.to_csv())
-    else :
-        st.markdown("Please submit to save")
+    # if clickSubmit == True: 
+    #      newdata = {'ref' : add_ref,
+    #           'Primary Air Flow Rate': qa, 
+    #           'Primary Air Temperature': dtra_cooling,
+    #           'Reference Air Remperature': troom_cooling,
+    #           'Room Temperature Gradient': tgr_cooling,
+    #           'Inlet Water Temperature': twin_cooling,
+    #           "dtw" : dtw_cooling,
+    #           "water flow rate" : qw3,
+    #           "water side capacity" : pw3,
+    #           "air side pressure" : pma}
+    #      st.write(newdata)
+    #      results_option2 = results_option2.append(newdata,ignore_index=True)
+    #      results_option2.to_csv('results_option2.csv',index=False)
+    #      #results_option1 = pd.concat([results_option1,d])
+    #      #open('results_option1.csv','a').write(results_option1.to_csv())
+    # else :
+    #     st.markdown("Please submit to save")
     
-    st.write(results_option2)
+    # st.write(results_option2)
