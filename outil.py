@@ -163,7 +163,8 @@ if option == 'Option 1 : ∆tw - Calculate water flow from given delta T':
         st.title("")
         st.title("")
         st.title("")
-        st.markdown("")
+        st.title("")
+        
         st.markdown('**Heating inputs**')
         troom_heating = st.number_input('Reference Air Temperature - troom (°C)  ',value=20.0,step=0.1,)
         tgr_heating = st.number_input('Room Temperature Gradient-tgr (°C/m)', value=0.0, step=0.1)
@@ -520,6 +521,7 @@ elif option == 'Option 2 : qw - Calculate delta T from given water flow':
         twin_cooling = st.number_input('Inlet Water Temperature - twin (°C)',value=15.0,min_value=13.0,step=0.1)
         qw_cooling = st.number_input('Water flow rate - qw (l/s)',value=0.08,step=0.001,min_value=0.038,max_value=0.1)
     with col2:
+        st.title("")
         st.title("")
         st.title("")
         st.title("")
