@@ -393,7 +393,7 @@ if option == 'Option 1 : ∆tw - Calculate water flow from given delta T':
         option1 = [
             ['Primary (Motive) air flow rate' ,'qa',qa,'',qa,'','(l/s)'],
             ['Reference air temperature','troom', round(troom_cooling,2),'',round(troom_heating,2),'', '(°C)'],
-            ['Primary (Motive) air température','ta',ta_cooling,'',ta_heating,''],
+            ['Primary (Motive) air température','ta',ta_cooling,'',ta_heating,'','(°C)'],
             ['Room temperature gradient','tgr',round(tgr_cooling,2),'',round(tgr_heating,2),'',''],
             ['Inlet water temperature','twi',round(twin_cooling,2),'',round(twin_heating,2),'','(°C)'],
             ['Outlet water temperature','twout',round(twout_cooling,2),'',round(twout_heating,2),'','(°C) '],
@@ -674,7 +674,7 @@ elif option == 'Option 2 : qw - Calculate delta T from given water flow':
         option2 = [
             ['Primary (Motive) air flow rate','qa',qa,'',qa,'', '(l/s)'],
             ['Reference air temperature','troom', round(troom_cooling,2),'',round(troom_heating,2),'', '(°C)'],
-            ["Primary (Motive) air température",'ta',ta_cooling,'',ta_heating,''],
+            ["Primary (Motive) air température",'ta',ta_cooling,'',ta_heating,'','(°C)'],
             ['Room temperature gradient','tgr',round(tgr_cooling,2),'',round(tgr_heating,2),'',''],
             ['Water flow rate','qw',round(qw_cooling,4),'',round(qw_heating,4),'', '(l/s)'],
             ['Inlet water temperature','twi',round(twin_cooling,2),'',round(twin_heating,2),'', '(°C)'],
