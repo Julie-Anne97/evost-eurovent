@@ -171,6 +171,7 @@ if option == 'Option 1 : ∆tw - Calculate water flow from given delta T':
         st.title("")
         st.title("")
         st.title("")
+        st.title("")
         st.write("")
         st.markdown('**Heating inputs**')
         troom_heating = st.number_input('Reference Air Temperature - troom (°C)  ',value=20.0,step=0.1,)
@@ -328,10 +329,14 @@ if option == 'Option 1 : ∆tw - Calculate water flow from given delta T':
         
         
         
+        
+        
         ## AUTRES CALCULS
         
-        dtra_cooling = troom_cooling+tgr_cooling-ta_cooling
-        dtra_heating = -(troom_heating+tgr_heating-ta_heating)
+        # dtra_cooling = troom_cooling+tgr_cooling-ta_cooling
+        # dtra_heating = -(troom_heating+tgr_heating-ta_heating)
+        dtra_cooling = troom_cooling-ta_cooling
+        dtra_heating = -(troom_heating-ta_heating)
         dtra_cooling = round(dtra_cooling,2)
         dtra_heating = round(dtra_heating,2)
 
@@ -553,6 +558,7 @@ elif option == 'Option 2 : qw - Calculate delta T from given water flow':
         st.title("")
         st.title("")
         st.title("")
+        st.title("")
         st.write("")
         st.markdown('**Heating inputs**')
         troom_heating = st.number_input('Reference Air Temperature - troom (°C)  ',value=20.0,step=0.1)
@@ -661,8 +667,10 @@ elif option == 'Option 2 : qw - Calculate delta T from given water flow':
 
         #Autres formules
         
-        dtra_cooling = (troom_cooling + tgr_cooling - ta_cooling)
-        dtra_heating = -(troom_heating + tgr_heating - ta_heating)
+        # dtra_cooling = (troom_cooling + tgr_cooling - ta_cooling)
+        # dtra_heating = -(troom_heating + tgr_heating - ta_heating)
+        dtra_cooling = (troom_cooling  - ta_cooling)
+        dtra_heating = -(troom_heating  - ta_heating)
         dtra_cooling = round(dtra_cooling,2)
         dtra_heating = round(dtra_heating,2)
 
