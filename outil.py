@@ -171,7 +171,6 @@ if option == 'Option 1 : ∆tw - Calculate water flow from given delta T':
         st.title("")
         st.title("")
         st.title("")
-        st.title("")
         st.write("")
         st.markdown('**Heating inputs**')
         troom_heating = st.number_input('Reference Air Temperature - troom (°C)  ',value=20.0,step=0.1,)
